@@ -1,2 +1,5 @@
 bircd/
 bircd.*
+ircserv
+*.o
+*.a

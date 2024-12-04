@@ -1,5 +1,6 @@
 SRC =	src/main.cpp		\
-		#src/server.cpp		\
+		src/Server.cpp		\
+		src/Client.cpp		\
 
 OBJ = $(SRC:.cpp=.o)
 
