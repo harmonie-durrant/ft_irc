@@ -1,4 +1,4 @@
-# cub3D
+# ft_irc
 
 <img src="https://github.com/mcombeau/mcombeau/blob/main/42_badges/ft_irce.png?raw=true" alt="ft_irc 42 project badge"/>
 
