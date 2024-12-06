@@ -17,12 +17,21 @@ std::vector<Client> Server::getClients() const {
 	return _clients;
 }
 
+const std::string Server::getPassword() const {
+	return _password;
+}
+
 void Server::setPort(int port) {
 	_port = port;
 }
 
 void Server::setClients(std::vector<Client> clients) {
 	_clients = clients;
+}
+
+void Server::start_server(void)
+{
+	std::cout << "Server start : Hoste name : ???? port :" << this->getPort() << std::endl;
 }
 
 void Server::addClient(Client client) {

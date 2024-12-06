@@ -19,10 +19,13 @@ class Server {
 		~Server();
 
 		int getPort() const;
+		const std::string getPassword() const;
 		std::vector<Client> getClients() const;
 
 		void setPort(int port);
 		void setClients(std::vector<Client> clients);
+
+		void start_server(void);
 
 		void addClient(Client client);
 		void removeClient(Client client);

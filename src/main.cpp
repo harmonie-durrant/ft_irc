@@ -14,16 +14,10 @@ int ft_stoi(const char *str)
 	return -1;
 }
 
-static int start_server(int port, const char *password)
-{
-	Server server(port, password);
-	std::cout << "Password: " << password << std::endl;
-	return 0;
-}
-
 int main(int ac, char const *av[])
 {
 	int port = 0;
+	Server *serverIrc = NULL;
 
 	if (ac != 3) {
 		std::cerr << "Usage: " << av[0] << " <port> <password>" << std::endl;
@@ -38,5 +32,21 @@ int main(int ac, char const *av[])
 		std::cerr << "Invalid password" << std::endl;
 		return 1;
 	}
-	return start_server(port, av[2]);
+	try
+	{
+		serverIrc = new Server(port, av[2]);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	try
+	{
+		serverIrc->start_server();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	delete serverIrc;
 }
