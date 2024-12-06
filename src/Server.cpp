@@ -31,7 +31,7 @@ void Server::setClients(std::vector<Client> clients) {
 
 void Server::start_server(void)
 {
-	std::cout << "Server start : Hoste name : ???? port :" << this->getPort() << std::endl;
+	std::cout << "Server start : Hostname : ???? port :" << this->getPort() << std::endl;
 }
 
 void Server::addClient(Client client) {
