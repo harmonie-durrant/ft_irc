@@ -16,7 +16,7 @@ int ft_stoi(const char *str)
 
 static int start_server(int port, const char *password)
 {
-	Server server(port);
+	Server server(port, password);
 	std::cout << "Password: " << password << std::endl;
 	return 0;
 }

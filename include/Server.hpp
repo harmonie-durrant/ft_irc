@@ -10,11 +10,12 @@
 
 class Server {
 	private:
-		int _port;
+		int 				_port;
+		const std::string	_password;
 		std::vector<Client> _clients;
 
 	public:
-		Server(int port);
+		Server(int port, std::string password);
 		~Server();
 
 		int getPort() const;

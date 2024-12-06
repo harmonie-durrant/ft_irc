@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(int port): _port(port) {
+Server::Server(int port, std::string password): _port(port), _password(password) {
 	_clients = std::vector<Client>();
 	std::cout << "Starting server on port " << port << std::endl;
 }
