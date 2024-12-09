@@ -1,7 +1,6 @@
 #include "Server.hpp"
 
 Server::Server(int port, std::string password): _port(port), _password(password) {
-	_clients = std::vector<Client>();
 	_server_fd = create_socket();
 	std::cout << "Starting server on port " << port << std::endl;
 }
@@ -14,31 +13,24 @@ int Server::getPort() const {
 	return _port;
 }
 
-std::vector<Client> Server::getClients() const {
+/*std::vector<Client> Server::getClients() const {
 	return _clients;
-}
+}*/
 
 const std::string Server::getPassword() const {
 	return _password;
 }
 
-void Server::setPort(int port) {
-	_port = port;
-}
-
-void Server::setClients(std::vector<Client> clients) {
-	_clients = clients;
-}
-
 void Server::client_disconnect(int fd)
 {
-	std::cout << "Client disconnected" << std::endl;
-	close(fd);
-	pfd_iterator it = _pfds.begin();
+	std::cout << "Client fd " << fd << " disconnected" << std::endl;
+    
+    pfd_iterator it = _pfds.begin();
     while (it != _pfds.end())
     {
         if (it->fd == fd)
         {
+            close(fd);
             _pfds.erase(it);
             return;
         }
@@ -52,14 +44,30 @@ void Server::client_connect(void)
     sockaddr_in addr;
     socklen_t   addr_len = sizeof(addr);
 
-	client_fd = accept(_server_fd, (struct sockaddr *)&addr, (socklen_t *)&addr_len);
-	if (client_fd < 0)
-        throw std::runtime_error("Error while accepting a new client!");
-	
-	pollfd client_poll_fd = {client_fd, POLLIN, 0};
-    _pfds.push_back(client_poll_fd);					// Ajouter le nouveau socket à la liste des sockets surveillés
-    std::cout << "Client connected with fd : " << client_fd << std::endl;
+    if (_pfds.size() - 1 >= MAX_CLIENTS)
+    {
+        std::cerr << "Connection refused : max number of clients reached" << std::endl;
+        return;
+    }
 
+	client_fd = accept(_server_fd, (struct sockaddr *)&addr, &addr_len);
+	if (client_fd == -1)
+        throw std::runtime_error("Error while accepting a new client");
+
+    if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)
+    {
+        close(client_fd);
+        throw std::runtime_error("Error while setting client socket to non blocking");
+    }
+
+	pollfd client_poll_fd = {client_fd, POLLIN, 0};
+    _pfds.push_back(client_poll_fd);	// Ajouter le nouveau socket à la liste des sockets surveillés
+
+    Client* client = new Client(client_fd, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+    _clients[client_fd] = client; //Normalement le std::map classera automatiquement le tableau en fonction du fd client (=cle)
+
+    std::cout << "Client with fd " << client_fd << " connected from "; 
+    std::cout << client->getIpAddr() << ":" << client->getPort() << std::endl;
 }
 
 void Server::client_message(int fd)
@@ -67,11 +75,9 @@ void Server::client_message(int fd)
 	char buffer[1024] = {0};
 	int bytes_read = recv(fd, buffer, sizeof(buffer), 0);
 	if (bytes_read <= 0)
-        std::cout << "sdfgsfdg" << std::endl;	
-		//client_disconnect(fd);
+		client_disconnect(fd);
 	else 
 	{
-		// Afficher le message reçu et repondre
 		std::cout << "Message received from " << fd << " : " << buffer;
 		const char *response = "Message received by server\n";
 		send(fd, response, strlen(response), 0);
@@ -80,7 +86,7 @@ void Server::client_message(int fd)
 
 void Server::start_server(void)
 {
-	std::cout << "Server start : Hostname : ???? port :" << this->getPort() << std::endl;
+	//std::cout << "Server start : Hostname : ???? port :" << this->getPort() << std::endl;
 
 	pollfd server_poll_fd = {_server_fd, POLLIN, 0};
     _pfds.push_back(server_poll_fd);
@@ -88,12 +94,12 @@ void Server::start_server(void)
 	while (true) 
 	{
         // Attendre que des evenements se produisent
-        if (poll(_pfds.data(), _pfds.size(), -1) < 0)				// -1= attendre indefiniment
+        if (poll(&_pfds[0], _pfds.size(), -1) == -1)			// -1 = attendre indefiniment
             throw std::runtime_error("Error while polling");
 
         for (size_t i = 0; i < _pfds.size(); ++i)
         {
-            pollfd &pfd = _pfds[i];
+            pollfd pfd = _pfds[i];
 
             if (pfd.revents == 0)		//poll() n'a rien detecte pour ce fd
                 continue;
@@ -101,7 +107,7 @@ void Server::start_server(void)
             if (pfd.revents & POLLHUP) 		//poll() a detecte une deconnexion
 			{
                 client_disconnect(pfd.fd);
-                --i;
+                --i;    //Reajuster pour regarder au meme indice au prochain tour de for() apres la suppression
                 continue;
             }
 
@@ -110,13 +116,12 @@ void Server::start_server(void)
                 if (pfd.fd == _server_fd)		//POLLIN pour le server = un client veut se connecter
                     client_connect();
                 else 
-                    client_message(pfd.fd);		//POLLIN pour un client = il veut envoyer qqchose au server (message/fichier)
-					//probleme, tourne en boucle quand le client de deconnecte
+                    client_message(pfd.fd);     //POLLIN pour un client = il veut envoyer qqchose au server (message/fichier)
 			}
         }
 	}
 }
-
+/*
 void Server::addClient(Client client) {
 	_clients.push_back(client);
 }
@@ -130,7 +135,7 @@ void Server::removeClient(Client client) {
 		}
 		it++;
 	}
-}
+}*/
 
 
 int Server::create_socket() {
@@ -140,8 +145,8 @@ int Server::create_socket() {
 
     //Creer une socket pour le serveur
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd == -1) {
-		        throw std::runtime_error("Error while opening socket");}
+    if (server_fd == -1)
+		throw std::runtime_error("Error while opening socket");
 
 	//Option pour pouvoir reutiliser le port immediatement apres sa fermeture, sinon bug souvent
 	int opt = 1;
@@ -149,7 +154,7 @@ int Server::create_socket() {
 
 	//Configurer le socket serveur en mode non bloquant, poll() le fait deja si on met le dernier parametre a 0 : poll(..., ..., 0)
 	//mais apparemment bien de faire les 2, et on ne sait pas encore si on mettra 0 pour ce parametre de poll()
-	if (fcntl(server_fd, F_SETFL, O_NONBLOCK))
+	if (fcntl(server_fd, F_SETFL, O_NONBLOCK) == -1)
         throw std::runtime_error("Error while setting socket to non blocking");
 
 

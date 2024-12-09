@@ -35,18 +35,11 @@ int main(int ac, char const *av[])
 	try
 	{
 		serverIrc = new Server(port, av[2]);
+        serverIrc->start_server(); //directement dans le meme bloc, si new Server() plante il ne tentera pas de lancer le serveur et faire un segfault
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
-	}
-	try
-	{
-		serverIrc->start_server();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
+		std::cerr << e.what() << std::endl;
 	}
 	delete serverIrc;
 }
