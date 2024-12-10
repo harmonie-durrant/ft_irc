@@ -29,11 +29,17 @@ class Client {
 		Client();
 		Client(int fd, std::string ip_addr, int port);
 		~Client();
-
-		int getFd() const;
+		// Getters
+		std::string	getNickname(void) const;
+		std::string getUsername(void) const;
+		std::string getFullname(void) const;
+		int			getFd() const;
 		std::string getIpAddr() const;
-		int getPort() const;
-
+		int			getPort() const;
+		// Setters
+		void setNickname(std::string nickname);
+		void setUsername(std::string username);
+		void setFullname(std::string fullname);
 		void setFd(int fd);
 		void setIpAddr(std::string ip_addr);
 };
