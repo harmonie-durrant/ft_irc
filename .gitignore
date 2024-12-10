@@ -3,3 +3,4 @@ bircd.*
 ircserv
 *.o
 *.a
+.vscode/

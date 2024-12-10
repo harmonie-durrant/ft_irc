@@ -33,7 +33,12 @@ class Server {
 		std::vector<pollfd>     _pfds;		// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
 		//std::vector<Channel *>  _channels;
 		std::map<int, Client *> _clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
-		
+
+		void	handle_cap(int fd, std::string buffer);
+		void	handle_pass(int fd, std::string buffer);
+		void	handle_ping(int fd, std::string buffer);
+		void	handle_mode(int fd, std::string buffer);
+		void	handle_quit(int fd, std::string buffer);
 
 		/*
 		struct pollfd {
