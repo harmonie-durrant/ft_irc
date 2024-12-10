@@ -25,6 +25,13 @@ void Server::client_disconnect(int fd)
 {
 	std::cout << "Client fd " << fd << " disconnected" << std::endl;
     
+	// Supprimer le client de la liste des clients avec getFd() == fd
+	client_iterator it_c = _clients.find(fd);
+	if (it_c != _clients.end())
+	{
+		delete it_c->second;
+		_clients.erase(it_c);
+	}
     pfd_iterator it = _pfds.begin();
     while (it != _pfds.end())
     {

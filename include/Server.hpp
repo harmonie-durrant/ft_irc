@@ -14,6 +14,7 @@
 #include <poll.h>				// pour poll()
 #include <algorithm>			// pour std::find()
 #include <arpa/inet.h>          // pour inet_ntoa()
+#include <csignal>				// pour signal()
 #include "Client.hpp"
 
 #define MAX_CLIENTS 1000		// valeur au hasard, a redefinir, mais il faut une valeur max pour listen()
@@ -60,6 +61,14 @@ class Server {
 
 		//void addClient(Client client);
 		//void removeClient(Client client);
+
+		// exception server closed
+		class ServerClosed : public std::exception {
+			public:
+				virtual const char *what() const throw() {
+					return "Server closed";
+				}
+		};
 };
 
 #endif

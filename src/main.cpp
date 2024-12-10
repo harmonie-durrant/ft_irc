@@ -14,6 +14,12 @@ int ft_stoi(const char *str)
 	return -1;
 }
 
+void signal_handler(int signum)
+{
+	std::cerr << "Signal " << signum << " received, exiting..." << std::endl;
+	throw Server::ServerClosed(); //on leve une exception pour pouvoir fermer proprement le serveur après le try/catch
+}
+
 int main(int ac, char const *av[])
 {
 	int port = 0;
@@ -34,6 +40,10 @@ int main(int ac, char const *av[])
 	}
 	try
 	{
+		signal(SIGINT, signal_handler); //gestion des signaux pour fermer proprement le serveur
+		signal(SIGTERM, signal_handler);
+		signal(SIGQUIT, signal_handler);
+		signal(SIGKILL, signal_handler);
 		serverIrc = new Server(port, av[2]);
         serverIrc->start_server(); //directement dans le meme bloc, si new Server() plante il ne tentera pas de lancer le serveur et faire un segfault
 	}
