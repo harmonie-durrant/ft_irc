@@ -25,7 +25,6 @@ void Server::client_disconnect(int fd)
 {
 	std::cout << "Client fd " << fd << " disconnected" << std::endl;
     
-	// Supprimer le client de la liste des clients avec getFd() == fd
 	client_iterator it_c = _clients.find(fd);
 	if (it_c != _clients.end())
 	{
@@ -79,16 +78,34 @@ void Server::client_connect(void)
 
 void Server::client_message(int fd)
 {
-	char buffer[1024] = {0};
-	int bytes_read = recv(fd, buffer, sizeof(buffer), 0);
+	char c_buffer[1024] = {0};
+	int bytes_read = recv(fd, c_buffer, sizeof(c_buffer), 0);
 	if (bytes_read <= 0)
-		client_disconnect(fd);
-	else 
 	{
-		std::cout << "Message received from " << fd << " : " << buffer;
-		const char *response = "Message received by server\n";
-		send(fd, response, strlen(response), 0);
+		client_disconnect(fd);
+		return;
 	}
+	std::string buffer(c_buffer);
+	std::cout << "Message received from " << fd << " : " << buffer;
+	std::map<std::string, void (Server::*)(int, std::string)> commands;
+	commands["CAP"] = &Server::handle_cap;
+	commands["PASS"] = &Server::handle_pass;
+	commands["PING"] = &Server::handle_ping;
+	commands["MODE"] = &Server::handle_mode;
+	commands["QUIT"] = &Server::handle_quit;
+	// map itterator
+	std::map<std::string, void (Server::*)(int, std::string)>::iterator it = commands.begin();
+	for (; it != commands.end(); ++it)
+	{
+		if (strncmp(c_buffer, it->first.c_str(), it->first.length()) == 0)
+		{
+			(this->*(it->second))(fd, buffer);
+			return;
+		}
+	}
+	// Handle unknown commands
+	std::string response = "ERR :Unknown command\r\n";
+	send(fd, response.c_str(), response.length(), 0);
 }
 
 void Server::start_server(void)
