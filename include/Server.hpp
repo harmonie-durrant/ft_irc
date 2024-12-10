@@ -27,6 +27,8 @@
 #include <algorithm>			// pour std::find()
 #include <arpa/inet.h>          // pour inet_ntoa()
 #include <csignal>				// pour signal()
+#include <memory>				// pour std::unique_ptr
+#include "Command.hpp"
 #include "Client.hpp"
 
 #define MAX_CLIENTS 1000		// valeur au hasard, a redefinir, mais il faut une valeur max pour listen()

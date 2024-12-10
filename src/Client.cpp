@@ -21,6 +21,11 @@ Client::Client(int fd, std::string ip_addr, int port) : _fd(fd), _port(port), _i
 Client::~Client() {
 }
 
+void Client::send_response(std::string response) {
+	std::cout << "==> " << response << std::endl;
+	send(_fd, response.c_str(), response.length(), 0);
+}
+
 int Client::getFd() const {
 	return _fd;
 }
@@ -33,10 +38,26 @@ int Client::getPort() const {
 	return _port;
 }
 
+std::string Client::getNickname() const {
+	return _nickname;
+}
+
+std::string Client::getUsername() const {
+	return _username;
+}
+
 void Client::setFd(int fd) {
 	_fd = fd;
 }
 
 void Client::setIpAddr(std::string ip_addr) {
 	_ip_addr = ip_addr;
+}
+
+void Client::setNickname(std::string nickname) {
+	_nickname = nickname;
+}
+
+void Client::setUsername(std::string username) {
+	_username = username;
 }

@@ -1,0 +1,11 @@
+#include "Command.hpp"
+
+Quit::Quit(Server* server, bool auth) : Command(server, auth) {}
+
+Quit::~Quit() {}
+
+void Quit::execute(Client* client, std::vector<std::string> args) {
+	(void)args;
+	client->send_response("Goodbye!\r\n");
+	_server->client_disconnect(client->getFd());
+}

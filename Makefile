@@ -10,10 +10,18 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRC =	src/main.cpp			\
-		src/Server.cpp			\
-		src/Client.cpp			\
-		src/server_handler.cpp	\
+SRC =	src/main.cpp				\
+		src/Server.cpp				\
+		src/Client.cpp				\
+		src/Command.cpp				\
+		src/commands/Cap.cpp		\
+		src/commands/Mode.cpp		\
+		src/commands/Nick.cpp		\
+		src/commands/Pass.cpp		\
+		src/commands/Privmsg.cpp	\
+		src/commands/Ping.cpp		\
+		src/commands/Quit.cpp		\
+		src/commands/User.cpp		\
 
 OBJ = $(SRC:.cpp=.o)
 

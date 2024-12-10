@@ -24,30 +24,94 @@ class Command
 private:
 	/* data */
 protected:
-	Server*	_server;
+	class Server*	_server;
 	bool	_auth;
 	Command();
-	Command(const &copy);
+	Command(const Command &copy);
 public:
 	// Constructors
-	explicit Command(Server* Server, bool auth);
+	explicit Command(class Server* Server, bool auth);
 	// Destructors
 	virtual ~Command();
 	// Overloaded Operators
 	// Public Methods
 	bool 			auth_required() const;
-	virtual void	execute(Client* client, std::vector<std::string> args) = 0;
+	virtual void	execute(class Client* client, std::vector<std::string> args) = 0;
 	// Setters
 	// Getter
 	// Exceptions
 };
 // Ostream Overload
 
+class Cap : public Command
+{
+public:
+	Cap(class Server* server, bool auth);
+	~Cap();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
+
+class Pass : public Command
+{
+public:
+	Pass(class Server* server, bool auth);
+	~Pass();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
+
+class Nick : public Command
+{
+public:
+	Nick(class Server* server, bool auth);
+	~Nick();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
+
+class User : public Command
+{
+public:
+	User(class Server* server, bool auth);
+	~User();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
+
+class Mode : public Command
+{
+public:
+	Mode(class Server* server, bool auth);
+	~Mode();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
+
+class Ping : public Command
+{
+public:
+	Ping(class Server* server, bool auth);
+	~Ping();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
+
+class Privmsg : public Command
+{
+public:
+	Privmsg(class Server* server, bool auth);
+	~Privmsg();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
+
 class Quit : public Command
 {
 public:
-	Quit(Server* server, bool auth);
+	Quit(class Server* server, bool auth);
 	~Quit();
 
-	void	execute(Client* client, std::vector<std::string> args);
+	void	execute(class Client* client, std::vector<std::string> args);
 };
+

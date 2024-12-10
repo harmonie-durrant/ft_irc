@@ -15,6 +15,8 @@
 
 #include <iostream>
 #include <string>
+#include <unistd.h>
+#include <sys/socket.h>
 
 class Client {
 	private:
@@ -29,6 +31,9 @@ class Client {
 		Client();
 		Client(int fd, std::string ip_addr, int port);
 		~Client();
+
+		void send_response(std::string response);
+
 		// Getters
 		std::string	getNickname(void) const;
 		std::string getUsername(void) const;

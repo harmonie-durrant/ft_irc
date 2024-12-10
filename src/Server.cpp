@@ -88,6 +88,16 @@ void Server::client_connect(void)
     std::cout << client->getIpAddr() << ":" << client->getPort() << std::endl;
 }
 
+std::vector<std::string> split(const std::string& str, char delimiter) {
+	std::vector<std::string> tokens;
+	std::string token;
+	std::istringstream tokenStream(str);
+	while (std::getline(tokenStream, token, delimiter)) {
+		tokens.push_back(token);
+	}
+	return tokens;
+}
+
 void Server::client_message(int fd)
 {
 	char c_buffer[1024] = {0};
@@ -98,26 +108,52 @@ void Server::client_message(int fd)
 		return;
 	}
 	std::string buffer(c_buffer);
-	std::cout << "Message received from " << fd << " : " << buffer;
-	std::map<std::string, void (Server::*)(int, std::string)> commands;
-	commands["CAP"] = &Server::handle_cap;
-	commands["PASS"] = &Server::handle_pass;
-	commands["PING"] = &Server::handle_ping;
-	commands["MODE"] = &Server::handle_mode;
-	commands["QUIT"] = &Server::handle_quit;
-	// map itterator
-	std::map<std::string, void (Server::*)(int, std::string)>::iterator it = commands.begin();
-	for (; it != commands.end(); ++it)
-	{
-		if (strncmp(c_buffer, it->first.c_str(), it->first.length()) == 0)
+	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
+	std::map<std::string, Command *> commands;
+	commands["CAP"] = new Cap(this, false);
+	commands["PASS"] = new Pass(this, false);
+	commands["NICK"] = new Nick(this, false);
+	commands["USER"] = new User(this, false);
+	commands["PRIVMSG"] = new Privmsg(this, false);
+	commands["MODE"] = new Mode(this, false);
+	commands["PING"] = new Ping(this, false);
+	commands["QUIT"] = new Quit(this, false);
+	std::vector<std::string> command_args = split(buffer, '\n');
+	std::vector<std::vector<std::string> > args;
+	for (std::size_t i = 0; i < command_args.size(); i++)
+	{	
+		args.push_back(split(command_args[i], ' '));
+		for (std::size_t j = 0; j < args[i].size(); j++)
 		{
-			(this->*(it->second))(fd, buffer);
-			return;
+			for (std::size_t k = 0; k < args[i][j].size(); k++)
+			{
+				if (args[i][j][k] == '\r')
+				{
+					args[i][j].erase(k, 1);
+					break;
+				}
+			}
 		}
 	}
-	// Handle unknown commands
-	std::string response = "ERR :Unknown command\r\n";
-	send(fd, response.c_str(), response.length(), 0);
+	for (std::size_t i = 0; i < command_args.size(); i++)
+	{
+		std::map<std::string, Command *>::iterator it;
+		for (it = commands.begin(); it != commands.end(); it++)
+		{
+			if (args[i][0] == it->first)
+			{
+				client_iterator it_c = _clients.find(fd);
+				if (it_c == _clients.end())
+				{
+					std::cerr << "Client not found" << std::endl;
+					return;
+				}
+				Client *client = it_c->second;
+				it->second->execute(client, args[i]);
+				break;
+			}
+		}
+	}
 }
 
 void Server::start_server(void)
