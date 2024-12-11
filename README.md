@@ -2,6 +2,8 @@
 
 <img src="https://github.com/mcombeau/mcombeau/blob/main/42_badges/ft_irce.png?raw=true" alt="ft_irc 42 project badge"/>
 
+[![ft_irc CI](https://github.com/harmonie-durrant/ft_irc/actions/workflows/cpp.yml/badge.svg?branch=main)](https://github.com/harmonie-durrant/ft_irc/actions/workflows/cpp.yml)
+
 ## Comment lancer le serverur IRC ?
 
 1. Clone le projet et naviguer dans le dossier crée
