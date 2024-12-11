@@ -156,7 +156,7 @@ void Server::client_message(int fd)
 	}
 }
 
-bool	Server::nicknameExist()
+bool	Server::nicknameExist(std::string nickname)
 {
 // verif si le nick name est deja pris si oui rajouter un _ a la fin
 //
