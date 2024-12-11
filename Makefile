@@ -42,6 +42,9 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	$(CC) $(CPPFLAGS) $(OBJ) -o $(NAME)
 
+check: all
+	sh ./check.sh
+
 clean:
 	rm -rf $(OBJ)
 
