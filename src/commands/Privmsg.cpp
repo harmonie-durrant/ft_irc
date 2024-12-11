@@ -5,10 +5,14 @@ Privmsg::Privmsg(Server* server, bool auth) : Command(server, auth) {}
 Privmsg::~Privmsg() {}
 
 void Privmsg::execute(Client* client, std::vector<std::string> args) {
-	if (args.size() < 2)
+	if (args.size() < 3)
 	{
-		client->send_response("ERR :Not enough parameters\r\n");
+		client->send_response(461, _server, client, args[0] + " :Not enough parameters");
 		return;
 	}
-	client->send_response(":" + client->getNickname() + " PRIVMSG " + args[1] + " :" + args[2] + "\r\n");
+	if (args[2][0] == ':')
+		args[2].erase(0, 1);
+	//! check if args[1] is a channel or a user
+	//! send to all users in channel or the target user
+	client->send_response(-1, _server, client, ":" + client->getNickname() + " PRIVMSG " + args[1] + " :" + args[2]);
 }

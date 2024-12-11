@@ -56,7 +56,7 @@ int main(int ac, char const *av[])
 		signal(SIGTERM, signal_handler);
 		signal(SIGQUIT, signal_handler);
 		signal(SIGKILL, signal_handler);
-		serverIrc = new Server(port, av[2]);
+		serverIrc = new Server(port, av[2], "ft_irc_server");
         serverIrc->start_server(); //directement dans le meme bloc, si new Server() plante il ne tentera pas de lancer le serveur et faire un segfault
 	}
 	catch(const std::exception& e)
