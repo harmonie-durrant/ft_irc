@@ -19,7 +19,7 @@ void Privmsg::execute(Client* client, std::vector<std::string> args) {
 		for (std::map<int, Client*>::iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++) {
 			if (it->second->getNickname() == args[1]) {
 				Client *target = it->second;
-				target->send_response(-1, _server, target, ":" + client->getNickname() + " PRIVMSG " + args[1] + " :" + message);
+				target->send_response(-1, _server, target, ":" + client->getNickname() + " PRIVMSG " + target->getNickname() + " :" + message);
 				return;
 			}
 		}
