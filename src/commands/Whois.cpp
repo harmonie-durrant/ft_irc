@@ -18,6 +18,7 @@ void Whois::execute(Client* client, std::vector<std::string> args) {
 	}
 	for (std::map<int, Client*>::iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
 	{
+		//! if user is hidden from WHOIS, break
 		if (it->second->getNickname() == args[1])
 		{
 			Client *target = it->second;
@@ -30,6 +31,8 @@ void Whois::execute(Client* client, std::vector<std::string> args) {
 			return;
 		}
 	}
+	//! check if input is a channel
+	//! for loop on server channels
     client->send_response(401, _server, client, args[1] + " :No such nick/channel");
 }
     
