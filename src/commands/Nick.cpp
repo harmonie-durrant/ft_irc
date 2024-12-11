@@ -10,8 +10,19 @@ void Nick::execute(Client* client, std::vector<std::string> args) {
 		client->send_response(461, _server, client, args[0] + " :Not enough parameters");
 		return;
 	}
-	//! check if nickname is valid
 	std::string oldnick = client->getNickname();
-	client->setNickname(args[1]);
+	std::string nickname = args[1];
+	if (oldnick == nickname)
+	{
+		client->send_response(-1, _server, client, ":" + oldnick + " NICK " + oldnick);
+		return;
+	}
+	if (_server->nicknameExist(nickname))
+	{
+		nickname = nickname + "_";
+		client->setNickname(nickname);
+		client->send_response(433, _server, client, args[1]);
+	}
+	client->setNickname(nickname);
 	client->send_response(-1, _server, client, ":" + oldnick + " NICK " + client->getNickname());
 }

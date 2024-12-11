@@ -166,6 +166,13 @@ void Server::client_message(int fd)
 
 bool	Server::nicknameExist(std::string nickname)
 {
+	client_iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		if (it->second->getNickname() == nickname)
+			return true;
+	}
+	return false;
 // verif si le nick name est deja pris si oui rajouter un _ a la fin
 //
 // avec la cmd nick mais aussi a la connection au serveur
