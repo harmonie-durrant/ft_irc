@@ -43,16 +43,11 @@ class Server {
 		int 				_port;
 		const std::string	_password;
 		int					_server_fd;			// fd du socket serveur
+		std::string			_servername;
 
 		std::vector<pollfd>     _pfds;		// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
 		//std::vector<Channel *>  _channels;
 		std::map<int, Client *> _clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
-
-		void	handle_cap(int fd, std::string buffer);
-		void	handle_pass(int fd, std::string buffer);
-		void	handle_ping(int fd, std::string buffer);
-		void	handle_mode(int fd, std::string buffer);
-		void	handle_quit(int fd, std::string buffer);
 
 		/*
 		struct pollfd {
@@ -63,7 +58,7 @@ class Server {
 		*/
 
 	public:
-		Server(int port, std::string password);
+		Server(int port, std::string password, std::string servername);
 		~Server();
 
 		int		create_socket();				// fonction qui creer et retourne le socket serveur
@@ -74,8 +69,9 @@ class Server {
 		bool	nicknameExist(std::string nickname);
 
 		int getPort() const;
-		const std::string getPassword() const;
-		//std::vector<Client> getClients() const;
+		std::string getPassword() const;
+		std::map<int, Client *> getClients() const;
+		std::string getServername() const;
 
 		void start_server(void);
 

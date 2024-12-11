@@ -4,3 +4,5 @@ ircserv
 *.o
 *.a
 .vscode/
+example.cpp
+create_command

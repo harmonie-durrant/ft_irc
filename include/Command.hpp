@@ -115,3 +115,11 @@ public:
 	void	execute(class Client* client, std::vector<std::string> args);
 };
 
+class Whois : public Command
+{
+public:
+	Whois(class Server* server, bool auth);
+	~Whois();
+
+	void    execute(class Client* client, std::vector<std::string> args);
+};

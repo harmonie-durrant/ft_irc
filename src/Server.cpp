@@ -12,7 +12,7 @@
 
 #include "Server.hpp"
 
-Server::Server(int port, std::string password): _port(port), _password(password) {
+Server::Server(int port, std::string password, std::string servername): _port(port), _password(password), _servername(servername) {
 	_server_fd = create_socket();
 	std::cout << "Starting server on port " << port << std::endl;
 }
@@ -29,7 +29,7 @@ int Server::getPort() const {
 	return _clients;
 }*/
 
-const std::string Server::getPassword() const {
+std::string Server::getPassword() const {
 	return _password;
 }
 
@@ -112,12 +112,13 @@ void Server::client_message(int fd)
 	std::map<std::string, Command *> commands;
 	commands["CAP"] = new Cap(this, false);
 	commands["PASS"] = new Pass(this, false);
-	commands["NICK"] = new Nick(this, false);
-	commands["USER"] = new User(this, false);
-	commands["PRIVMSG"] = new Privmsg(this, false);
-	commands["MODE"] = new Mode(this, false);
-	commands["PING"] = new Ping(this, false);
-	commands["QUIT"] = new Quit(this, false);
+	commands["NICK"] = new Nick(this, true);
+	commands["USER"] = new User(this, true);
+	commands["PRIVMSG"] = new Privmsg(this, true);
+	commands["MODE"] = new Mode(this, true);
+	commands["PING"] = new Ping(this, true);
+	commands["QUIT"] = new Quit(this, true);
+	commands["WHOIS"] = new Whois(this, true);
 	std::vector<std::string> command_args = split(buffer, '\n');
 	std::vector<std::vector<std::string> > args;
 	for (std::size_t i = 0; i < command_args.size(); i++)
@@ -149,6 +150,13 @@ void Server::client_message(int fd)
 					return;
 				}
 				Client *client = it_c->second;
+				if (it->second->auth_required() && ((!client->getAuth()
+				|| client->getNickname().empty() || client->getUsername().empty()
+				|| client->getFullname().empty()) && args[i][0] != "USER" && args[i][0] != "NICK"))
+				{
+					client->send_response(451, this, client, ":You have not registered" + args[i][0]);
+					return;
+				}
 				it->second->execute(client, args[i]);
 				break;
 			}
@@ -263,4 +271,12 @@ int Server::create_socket() {
 
 	//std::runtime_error pour pouvoir catch les throw dans les blocs catch(const std::exception& e) sans avoir
 	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
+}
+
+std::map<int, Client *> Server::getClients() const {
+	return _clients;
+}
+
+std::string Server::getServername() const {
+	return _servername;
 }

@@ -6,6 +6,5 @@ Quit::~Quit() {}
 
 void Quit::execute(Client* client, std::vector<std::string> args) {
 	(void)args;
-	client->send_response("Goodbye!\r\n");
 	_server->client_disconnect(client->getFd());
 }
