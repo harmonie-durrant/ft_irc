@@ -36,7 +36,7 @@ std::string Server::getPassword() const {
 void Server::client_disconnect(int fd)
 {
 	std::cout << "Client fd " << fd << " disconnected" << std::endl;
-    
+
 	client_iterator it_c = _clients.find(fd);
 	if (it_c != _clients.end())
 	{
@@ -84,7 +84,7 @@ void Server::client_connect(void)
     Client* client = new Client(client_fd, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
     _clients[client_fd] = client; //Normalement le std::map classera automatiquement le tableau en fonction du fd client (=cle)
 
-    std::cout << "Client with fd " << client_fd << " connected from "; 
+    std::cout << "Client with fd " << client_fd << " connected from ";
     std::cout << client->getIpAddr() << ":" << client->getPort() << std::endl;
 }
 
@@ -122,7 +122,7 @@ void Server::client_message(int fd)
 	std::vector<std::string> command_args = split(buffer, '\n');
 	std::vector<std::vector<std::string> > args;
 	for (std::size_t i = 0; i < command_args.size(); i++)
-	{	
+	{
 		args.push_back(split(command_args[i], ' '));
 		for (std::size_t j = 0; j < args[i].size(); j++)
 		{
@@ -164,6 +164,18 @@ void Server::client_message(int fd)
 	}
 }
 
+bool	Server::nicknameExist(std::string nickname)
+{
+// verif si le nick name est deja pris si oui rajouter un _ a la fin
+//
+// avec la cmd nick mais aussi a la connection au serveur
+// Mess a la connection
+// Irssi: Your nickname is froque_
+// Mess retour cmd nick
+// Irssi: Your nick is in use by froque [~froque@evolu.net-7A04F0D5.ftth.fr.orangecustomers.net]
+// voir si limite en nbre de char
+}
+
 void Server::start_server(void)
 {
 	//std::cout << "Server start : Hostname : ???? port :" << this->getPort() << std::endl;
@@ -171,7 +183,7 @@ void Server::start_server(void)
 	pollfd server_poll_fd = {_server_fd, POLLIN, 0};
     _pfds.push_back(server_poll_fd);
 
-	while (true) 
+	while (true)
 	{
         // Attendre que des evenements se produisent
         if (poll(&_pfds[0], _pfds.size(), -1) == -1)			// -1 = attendre indefiniment
@@ -191,11 +203,11 @@ void Server::start_server(void)
                 continue;
             }
 
-            if (pfd.revents & POLLIN) 
+            if (pfd.revents & POLLIN)
 			{
                 if (pfd.fd == _server_fd)		//POLLIN pour le server = un client veut se connecter
                     client_connect();
-                else 
+                else
                     client_message(pfd.fd);     //POLLIN pour un client = il veut envoyer qqchose au server (message/fichier)
 			}
         }
@@ -219,7 +231,7 @@ void Server::removeClient(Client client) {
 
 
 int Server::create_socket() {
-	
+
 	int server_fd;
     struct sockaddr_in address;
 
@@ -257,7 +269,7 @@ int Server::create_socket() {
 
 	return server_fd;
 
-	//std::runtime_error pour pouvoir catch les throw dans les blocs catch(const std::exception& e) sans avoir 
+	//std::runtime_error pour pouvoir catch les throw dans les blocs catch(const std::exception& e) sans avoir
 	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
 }
 
