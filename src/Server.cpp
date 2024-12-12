@@ -243,7 +243,7 @@ int Server::create_socket() {
     struct sockaddr_in address;
 
     //Creer une socket pour le serveur
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server_fd == -1)
 		throw std::runtime_error("Error while opening socket");
 
