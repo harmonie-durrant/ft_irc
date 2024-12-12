@@ -1,1 +1,7 @@
 A la fermeture du server, fermer le socket server
+
+Au changement de nickname avec la cmd NICK : si le nickname est deja pris :
+Ne pas changer le nickname et renvoyer un message.
+
+A la connection si le nickname est deja pris rajouter un _ : -> OK mais
+Il faut verifier si le nouveau nickname avec le _ n est pas pris. ainsi de suite
