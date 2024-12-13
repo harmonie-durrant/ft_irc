@@ -27,15 +27,20 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 }
 
 Server::~Server() {
+	std::cout << "Server shutting down..." << std::endl;
 	for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
 		delete it->second;
 	// for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
 	// 	delete *it;
-	for (client_iterator it = _clients.begin(); it != _clients.end(); it++) {
+	std::cout << "Disconnecting clients..." << std::endl;
+	client_iterator it = _clients.begin();
+	while (it != _clients.end()) {
 		this->client_disconnect(it->first);
+		it = _clients.begin();
 	}
+	std::cout << "Closing server socket..." << std::endl;
 	close(_server_fd);
-	std::cout << "Server shutting down" << std::endl;
+	std::cout << "Server shut down, goodbye!" << std::endl;
 }
 
 int Server::getPort() const {
