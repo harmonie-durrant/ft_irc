@@ -1,8 +1,8 @@
-1.
+1. WHOIS segfault avec plus de deux clients
 
-2.
+2. ...
 
-3.
+3. ...
 
 --- COMMANDS TO ADD/Finish ---
 
