@@ -33,21 +33,24 @@
 
 #define MAX_CLIENTS 1000		// valeur au hasard, a redefinir, mais il faut une valeur max pour listen()
 
+class Command;
+
 class Server {
 
-	typedef std::vector<pollfd>::iterator       pfd_iterator;	// pour les recherches dans le tableau _pfds sand devoir reecrire "std::vector<pollfd>::iterator" a chaque fois
-	//typedef std::vector<Channel *>::iterator    channel_iterator;
-    typedef std::map<int, Client *>::iterator   client_iterator;
+	typedef std::vector<pollfd>::iterator				pfd_iterator;	// pour les recherches dans le tableau _pfds sand devoir reecrire "std::vector<pollfd>::iterator" a chaque fois
+	// typedef std::vector<Channel *>::iterator			channel_iterator;
+    typedef std::map<int, Client *>::iterator			client_iterator;
+	typedef std::map<std::string, Command *>::iterator	command_iterator;
 
 	private:
-		int 				_port;
-		const std::string	_password;
-		int					_server_fd;			// fd du socket serveur
-		std::string			_servername;
-
-		std::vector<pollfd>     _pfds;		// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
-		//std::vector<Channel *>  _channels;
-		std::map<int, Client *> _clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
+		int 								_port;
+		const std::string					_password;
+		int									_server_fd;	// fd du socket serveur
+		std::string							_servername;
+		std::map<std::string, Command *>	_commands;	// map des commandes disponibles sur le serveur
+		std::vector<pollfd>					_pfds;	// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
+		// std::vector<Channel *>				_channels;
+		std::map<int, Client *>				_clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
 
 		/*
 		struct pollfd {
@@ -69,6 +72,7 @@ class Server {
 		bool	nicknameExist(std::string nickname);
 
 		int getPort() const;
+		std::map<std::string, Command *> getCommands() const;
 		std::string getPassword() const;
 		std::map<int, Client *> getClients() const;
 		std::string getServername() const;
