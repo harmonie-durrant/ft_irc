@@ -49,6 +49,8 @@ void Client::send_response(int code, Server *server, Client *client, std::string
 	else if (code < 100)
 		s_code = "0" + s_code;
 	response = ":" + servername + " " + s_code + " " + nick + " " + msg + "\r\n";
+	if (nick.empty())
+		response = ":" + servername + " " + s_code + " " + msg + "\r\n";
 	std::cout << _fd << "==> " << response << std::endl;
 	send(_fd, response.c_str(), response.length(), 0);
 }

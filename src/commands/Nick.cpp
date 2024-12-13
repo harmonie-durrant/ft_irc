@@ -19,10 +19,14 @@ void Nick::execute(Client* client, std::vector<std::string> args) {
 	}
 	if (_server->nicknameExist(nickname))
 	{
-		nickname = nickname + "_";
-		client->setNickname(nickname);
-		client->send_response(433, _server, client, args[1]);
+		nickname = args[1];
+		if (args[1][0] == ' ')
+			nickname = nickname.substr(1);
+		client->send_response(433, _server, client, nickname + " " + nickname);
+		return;
 	}
 	client->setNickname(nickname);
 	client->send_response(-1, _server, client, ":" + oldnick + " NICK " + client->getNickname());
+	if (!client->getUsername().empty() && !client->getFullname().empty() && !client->getHostname().empty())
+		client->send_response(001, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
 }
