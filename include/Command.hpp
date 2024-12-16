@@ -123,3 +123,12 @@ public:
 
 	void    execute(class Client* client, std::vector<std::string> args);
 };
+
+class Join : public Command
+{
+public:
+	Join(class Server* server, bool auth);
+	~Join();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
