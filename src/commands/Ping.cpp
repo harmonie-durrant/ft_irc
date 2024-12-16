@@ -1,4 +1,6 @@
 #include "Command.hpp"
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 
 Ping::Ping(Server* server, bool auth) : Command(server, auth) {}
 

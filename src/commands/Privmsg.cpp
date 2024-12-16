@@ -1,4 +1,6 @@
 #include "Command.hpp"
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 
 Privmsg::Privmsg(Server* server, bool auth) : Command(server, auth) {}
 
@@ -7,7 +9,7 @@ Privmsg::~Privmsg() {}
 void Privmsg::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 3)
 	{
-		client->send_response(461, _server, client, args[0] + " :Not enough parameters");
+		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
 		return;
 	}
 	if (args[2][0] == ':')
@@ -23,12 +25,12 @@ void Privmsg::execute(Client* client, std::vector<std::string> args) {
 				return;
 			}
 		}
-		client->send_response(401, _server, client, args[1] + " :No such nick/channel");
+		client->send_response(ERR_NOSUCHNICK, _server, client, args[1] + " :No such nick/channel");
 		return;
 	}
 	//! for loop to send to every channel
 	// client->send_response(401, _server, client, args[1] + " :No such nick/channel");
-	
+
 	// DEBUG, sends message back to sender as if they were the target
 	client->send_response(-1, _server, client, ":" + client->getNickname() + " PRIVMSG " + args[1] + " :" + message);
 }

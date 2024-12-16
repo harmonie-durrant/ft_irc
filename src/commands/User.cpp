@@ -1,4 +1,6 @@
 #include "Command.hpp"
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 
 User::User(Server* server, bool auth) : Command(server, auth) {}
 
@@ -8,7 +10,7 @@ void User::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() != 5)
 	{
 		client->setAuth(false);
-		client->send_response(461, _server, client, args[0] + " :Not enough parameters");
+		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
 		return;
 	}
 	client->setUsername(args[1]);
@@ -16,5 +18,5 @@ void User::execute(Client* client, std::vector<std::string> args) {
 	//! client->setServerName(args[3]); ???
 	client->setFullname(args[4]);
 	if (!client->getNickname().empty())
-		client->send_response(001, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
+		client->send_response(RPL_WELCOME, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
 }
