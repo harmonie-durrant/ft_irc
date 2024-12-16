@@ -164,6 +164,31 @@ void Server::client_message(int fd)
 	}
 }
 
+std::string	Server::strToLower(const std::string &input)
+{
+	std::string	inputLower = input;
+
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		inputLower[i] = std::tolower(static_cast<unsigned char>(input[i]));
+	}
+	return (inputLower);
+}
+
+
+bool	Server::nicknameExist(std::string nickname)
+{
+	client_iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		std::string tempNickname = strToLower(it->second->getNickname());
+		if (tempNickname == strToLower(nickname))
+			return true;
+	}
+	return false;
+}
+
+/*
 bool	Server::nicknameExist(std::string nickname)
 {
 	client_iterator it;
@@ -182,7 +207,7 @@ bool	Server::nicknameExist(std::string nickname)
 // Irssi: Your nick is in use by froque [~froque@evolu.net-7A04F0D5.ftth.fr.orangecustomers.net]
 // voir si limite en nbre de char
 }
-
+*/
 void Server::start_server(void)
 {
 	//std::cout << "Server start : Hostname : ???? port :" << this->getPort() << std::endl;

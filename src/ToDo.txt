@@ -1,3 +1,6 @@
+ressource https://mathieu-lemoine.developpez.com/tutoriels/irc/protocole/
+
+
 A la fermeture du server, fermer le socket server
 
 Au changement de nickname avec la cmd NICK : si le nickname est deja pris :
@@ -5,3 +8,21 @@ Ne pas changer le nickname et renvoyer un message.
 
 A la connection si le nickname est deja pris rajouter un _ : -> OK mais
 Il faut verifier si le nouveau nickname avec le _ n est pas pris. ainsi de suite
+
+on ne peut pas avoir deux nickname identiques mais avec une casse differente :
+exple froque et FROQUE ne peuvent pas exister
+par contre le nickname enregistre conserve sa casse
+
+
+
+bool	Server::nicknameExist(std::string nickname)
+{
+	client_iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		std::string tempNickname = strToLower(it->second->getNickname());
+		if (tempNickname == strToLower(nickname))
+			return true;
+	}
+	return false;
+}

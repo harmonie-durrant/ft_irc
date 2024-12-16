@@ -66,7 +66,8 @@ class Server {
 		void	client_disconnect(int fd);
 		void	client_message(int fd);
 
-		bool	nicknameExist(std::string nickname);
+		std::string	strToLower(const std::string &input);
+		bool		nicknameExist(std::string nickname);
 
 		int getPort() const;
 		std::string getPassword() const;
