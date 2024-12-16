@@ -28,6 +28,7 @@
 #include <arpa/inet.h>          // pour inet_ntoa()
 #include <csignal>				// pour signal()
 #include <memory>				// pour std::unique_ptr
+#include "codes.hpp"
 #include "Command.hpp"
 #include "Client.hpp"
 

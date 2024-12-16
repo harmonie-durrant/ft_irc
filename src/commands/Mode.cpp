@@ -7,7 +7,7 @@ Mode::~Mode() {}
 void Mode::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 2)
 	{
-		client->send_response(461, _server, client, args[0] + " :Not enough parameters");
+		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
 		return;
 	}
 	std::string nick = client->getNickname();

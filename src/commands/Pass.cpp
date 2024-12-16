@@ -7,7 +7,7 @@ Pass::~Pass() {}
 void Pass::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 2)
 	{
-		client->send_response(461, _server, client, args[0] + " :Not enough parameters");
+		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
 		return;
 	}
 	if (args[1] != _server->getPassword())
@@ -16,5 +16,10 @@ void Pass::execute(Client* client, std::vector<std::string> args) {
 		_server->client_disconnect(client->getFd());
 		return;
 	}
-	client->setAuth(true);
+	client->setPassOK(true);
+	if (client->getNickname() != "" && client->getUsername() != "" && client->getHostname() != "" && client->getFullname() != "")
+	{
+		client->send_response(001, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
+		client->setAuth(true);
+	}
 }

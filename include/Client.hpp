@@ -17,6 +17,7 @@
 #include <string>
 #include <unistd.h>
 #include <sys/socket.h>
+#include "codes.hpp"
 
 class Server;
 
@@ -27,6 +28,7 @@ class Client {
 		std::string	_fullname;
 		std::string	_hostname;
 		bool		_auth;
+		bool		_passok;
 		int			_fd;
 		int			_port;		//apparemment peu utile de recuperer le port, on verra si on garde ou pas
 		std::string	_ip_addr;
@@ -45,6 +47,7 @@ class Client {
 		std::string	getFullname(void) const;
 		std::string	getHostname(void) const;
 		bool		getAuth() const;
+		bool		getPassOK() const;
 		int			getFd() const;
 		std::string	getIpAddr() const;
 		int			getPort() const;
@@ -56,6 +59,7 @@ class Client {
 		void	setHostname(std::string hostname);
 		void	clearCache();	// vider le cache
 		void	appendCache(std::string str); // concatoner des strings dans le cache
+		void	setPassOK(bool ok);
 		void	setAuth(bool auth);
 		void	setFd(int fd);
 		void	setIpAddr(std::string ip_addr);

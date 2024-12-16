@@ -16,6 +16,7 @@
 // Includes
 #include <iostream>
 #include <string>
+#include "codes.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
 
