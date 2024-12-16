@@ -128,6 +128,22 @@ void Server::client_message(int fd) {
 	}
 	std::string buffer(c_buffer);
 	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
+	client_iterator it_c = _clients.find(fd);
+	if (it_c == _clients.end())
+	{
+		std::cerr << "Client not found" << std::endl;
+		return;
+	}
+	Client *c_client = it_c->second;
+	if (buffer[bytes_read - 1] != '\n')
+	{
+		c_client->appendCache(buffer);
+		return;
+	} else {
+		buffer = c_client->getCache() + buffer;
+		c_client->clearCache();
+	}
+	std::cout << "New complete buffer recieved for " << fd << " is " << buffer << std::endl;
 	std::vector<std::string> command_args = split(buffer, '\n');
 	std::vector<std::vector<std::string> > args;
 	for (std::size_t i = 0; i < command_args.size(); i++)

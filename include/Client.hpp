@@ -29,32 +29,36 @@ class Client {
 		bool		_auth;
 		int			_fd;
 		int			_port;		//apparemment peu utile de recuperer le port, on verra si on garde ou pas
-		std::string _ip_addr;
+		std::string	_ip_addr;
+		std::string	_cache;
 
 	public:
 		Client();
 		Client(int fd, std::string ip_addr, int port);
 		~Client();
 
-		void send_response(int code, Server *server, Client *client, std::string msg);
+		void	send_response(int code, Server *server, Client *client, std::string msg);
 
 		// Getters
 		std::string	getNickname(void) const;
-		std::string getUsername(void) const;
-		std::string getFullname(void) const;
-		std::string getHostname(void) const;
+		std::string	getUsername(void) const;
+		std::string	getFullname(void) const;
+		std::string	getHostname(void) const;
 		bool		getAuth() const;
 		int			getFd() const;
-		std::string getIpAddr() const;
+		std::string	getIpAddr() const;
 		int			getPort() const;
+		std::string	getCache() const;
 		// Setters
-		void setNickname(std::string nickname);
-		void setUsername(std::string username);
-		void setFullname(std::string fullname);
-		void setHostname(std::string hostname);
-		void setAuth(bool auth);
-		void setFd(int fd);
-		void setIpAddr(std::string ip_addr);
+		void	setNickname(std::string nickname);
+		void	setUsername(std::string username);
+		void	setFullname(std::string fullname);
+		void	setHostname(std::string hostname);
+		void	clearCache();	// vider le cache
+		void	appendCache(std::string str); // concatoner des strings dans le cache
+		void	setAuth(bool auth);
+		void	setFd(int fd);
+		void	setIpAddr(std::string ip_addr);
 };
 
 #endif

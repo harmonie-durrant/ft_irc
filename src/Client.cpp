@@ -87,6 +87,18 @@ std::string Client::getHostname() const {
 	return _hostname;
 }
 
+std::string Client::getCache() const {
+	return _cache;
+}
+
+void Client::clearCache() {
+	_cache = "";
+}
+
+void Client::appendCache(std::string str) {
+	_cache = _cache + str;
+}
+
 void Client::setFd(int fd) {
 	_fd = fd;
 }
