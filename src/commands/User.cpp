@@ -15,5 +15,6 @@ void User::execute(Client* client, std::vector<std::string> args) {
 	client->setHostname(args[2]);
 	//! client->setServerName(args[3]); ???
 	client->setFullname(args[4]);
-	client->send_response(001, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
+	if (!client->getNickname().empty())
+		client->send_response(001, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
 }

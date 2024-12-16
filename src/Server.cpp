@@ -13,12 +13,34 @@
 #include "Server.hpp"
 
 Server::Server(int port, std::string password, std::string servername): _port(port), _password(password), _servername(servername) {
+	_commands["CAP"] = new Cap(this, false);
+	_commands["PASS"] = new Pass(this, false);
+	_commands["NICK"] = new Nick(this, true);
+	_commands["USER"] = new User(this, true);
+	_commands["PRIVMSG"] = new Privmsg(this, true);
+	_commands["MODE"] = new Mode(this, true);
+	_commands["PING"] = new Ping(this, true);
+	_commands["QUIT"] = new Quit(this, true);
+	_commands["WHOIS"] = new Whois(this, true);
 	_server_fd = create_socket();
 	std::cout << "Starting server on port " << port << std::endl;
 }
 
 Server::~Server() {
-	std::cout << "Server shutting down" << std::endl;
+	std::cout << "Server shutting down..." << std::endl;
+	for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
+		delete it->second;
+	// for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
+	// 	delete *it;
+	std::cout << "Disconnecting clients..." << std::endl;
+	client_iterator it = _clients.begin();
+	while (it != _clients.end()) {
+		this->client_disconnect(it->first);
+		it = _clients.begin();
+	}
+	std::cout << "Closing server socket..." << std::endl;
+	close(_server_fd);
+	std::cout << "Server shut down, goodbye!" << std::endl;
 }
 
 int Server::getPort() const {
@@ -33,8 +55,7 @@ std::string Server::getPassword() const {
 	return _password;
 }
 
-void Server::client_disconnect(int fd)
-{
+void Server::client_disconnect(int fd) {
 	std::cout << "Client fd " << fd << " disconnected" << std::endl;
 
 	client_iterator it_c = _clients.find(fd);
@@ -56,8 +77,7 @@ void Server::client_disconnect(int fd)
     }
 }
 
-void Server::client_connect(void)
-{
+void Server::client_connect(void) {
 	int         client_fd;
     sockaddr_in addr;
     socklen_t   addr_len = sizeof(addr);
@@ -98,8 +118,7 @@ std::vector<std::string> split(const std::string& str, char delimiter) {
 	return tokens;
 }
 
-void Server::client_message(int fd)
-{
+void Server::client_message(int fd) {
 	char c_buffer[1024] = {0};
 	int bytes_read = recv(fd, c_buffer, sizeof(c_buffer), 0);
 	if (bytes_read <= 0)
@@ -109,16 +128,6 @@ void Server::client_message(int fd)
 	}
 	std::string buffer(c_buffer);
 	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
-	std::map<std::string, Command *> commands;
-	commands["CAP"] = new Cap(this, false);
-	commands["PASS"] = new Pass(this, false);
-	commands["NICK"] = new Nick(this, true);
-	commands["USER"] = new User(this, true);
-	commands["PRIVMSG"] = new Privmsg(this, true);
-	commands["MODE"] = new Mode(this, true);
-	commands["PING"] = new Ping(this, true);
-	commands["QUIT"] = new Quit(this, true);
-	commands["WHOIS"] = new Whois(this, true);
 	std::vector<std::string> command_args = split(buffer, '\n');
 	std::vector<std::vector<std::string> > args;
 	for (std::size_t i = 0; i < command_args.size(); i++)
@@ -138,8 +147,7 @@ void Server::client_message(int fd)
 	}
 	for (std::size_t i = 0; i < command_args.size(); i++)
 	{
-		std::map<std::string, Command *>::iterator it;
-		for (it = commands.begin(); it != commands.end(); it++)
+		for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
 		{
 			if (args[i][0] == it->first)
 			{
@@ -198,20 +206,10 @@ bool	Server::nicknameExist(std::string nickname)
 			return true;
 	}
 	return false;
-// verif si le nick name est deja pris si oui rajouter un _ a la fin
-//
-// avec la cmd nick mais aussi a la connection au serveur
-// Mess a la connection
-// Irssi: Your nickname is froque_
-// Mess retour cmd nick
-// Irssi: Your nick is in use by froque [~froque@evolu.net-7A04F0D5.ftth.fr.orangecustomers.net]
-// voir si limite en nbre de char
 }
 */
 void Server::start_server(void)
 {
-	//std::cout << "Server start : Hostname : ???? port :" << this->getPort() << std::endl;
-
 	pollfd server_poll_fd = {_server_fd, POLLIN, 0};
     _pfds.push_back(server_poll_fd);
 
@@ -261,7 +259,6 @@ void Server::removeClient(Client client) {
 	}
 }*/
 
-
 int Server::create_socket() {
 
 	int server_fd;
@@ -303,6 +300,10 @@ int Server::create_socket() {
 
 	//std::runtime_error pour pouvoir catch les throw dans les blocs catch(const std::exception& e) sans avoir
 	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
+}
+
+std::map<std::string, Command *> Server::getCommands() const {
+	return _commands;
 }
 
 std::map<int, Client *> Server::getClients() const {
