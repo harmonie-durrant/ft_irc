@@ -25,6 +25,7 @@ private:
 	std::string				_name;
 	Client*					_operator;
 	std::vector<Client *>	_clients;
+	std::string				_topic;
 	int						_limit;
 public:
 	// Constructors
@@ -35,9 +36,11 @@ public:
 	// Public Methods
 	// Setters
 	void		setName(std::string name);
+	void		setTopic(class Client *client, std::string topic);
 	void		setLimit(int limit);
 	// Getter
 	std::string	getName() const;
+	std::string	getTopic() const;
 	Client*		getOperator() const;
 	int			getLimit() const;
 	// Exceptions
