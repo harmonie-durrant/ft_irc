@@ -19,6 +19,7 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 	_commands["USER"] = new User(this, true);
 	_commands["PRIVMSG"] = new Privmsg(this, true);
 	_commands["MODE"] = new Mode(this, true);
+	_commands["PART"] = new Part(this, true);
 	_commands["PING"] = new Ping(this, true);
 	_commands["QUIT"] = new Quit(this, true);
 	_commands["WHOIS"] = new Whois(this, true);
