@@ -19,8 +19,11 @@ Part::Part(Server* server, bool auth) : Command(server, auth) {}
 Part::~Part() {}
 
 void Part::execute(Client* client, std::vector<std::string> args) {
-	(void)args;
-	(void)client;
+	if (args.size() < 2)
+	{
+		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
+		return;
+	}
 }
 
 /*
