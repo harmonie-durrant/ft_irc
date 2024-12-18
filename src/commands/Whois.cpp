@@ -8,14 +8,10 @@ void Whois::execute(Client* client, std::vector<std::string> args) {
 	std::string servername = "localhost";
 	if (args.size() < 2)
 	{
-		client->send_response(431, _server, client, "No nickname given");
+		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
 		return;
 	}
-	if (args.size() > 2)
-	{
-		client->send_response(409, _server, client, "Too many targets");
-		return;
-	}
+	// for every argument, check if it is a user or channel and print info accordingly
 	for (std::map<int, Client*>::iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
 	{
 		//! if user is hidden from WHOIS, break
