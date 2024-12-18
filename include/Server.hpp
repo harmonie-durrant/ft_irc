@@ -73,13 +73,16 @@ class Server {
 
 		std::string	strToLower(const std::string &input);
 		bool		nicknameExist(std::string nickname);
+		int			handle_cache(std::string &buffer, Client *client, std::size_t bytes_read);
+		void		execute_commands(std::vector<std::string> c_commands, std::vector<std::vector<std::string> > args, int fd);
 
-		int getPort() const;
-		std::map<std::string, Command *> getCommands() const;
-		std::string getPassword() const;
-		std::map<int, Client *> getClients() const;
-		std::string getServername() const;
-		Command *getCommand(std::string command);
+		int									getPort() const;
+		std::map<std::string, Command *>	getCommands() const;
+		std::string							getPassword() const;
+		Client								*get_client(int fd);
+		std::map<int, Client *>				getClients() const;
+		std::string							getServername() const;
+		Command								*getCommand(std::string command);
 
 		void start_server(void);
 

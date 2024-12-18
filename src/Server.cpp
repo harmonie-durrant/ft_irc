@@ -120,51 +120,21 @@ std::vector<std::string> split(const std::string& str, char delimiter) {
 	return tokens;
 }
 
-void Server::client_message(int fd) {
-	char c_buffer[1024] = {0};
-	int bytes_read = recv(fd, c_buffer, sizeof(c_buffer), 0);
-	if (bytes_read <= 0)
-	{
-		client_disconnect(fd);
-		return;
-	}
-	std::string buffer(c_buffer);
-	client_iterator it_c = _clients.find(fd);
-	if (it_c == _clients.end())
-	{
-		std::cerr << "Client not found" << std::endl;
-		return;
-	}
-	Client *c_client = it_c->second;
+int Server::handle_cache(std::string &buffer, Client *client, std::size_t bytes_read) {
 	if (buffer[bytes_read - 1] != '\n')
 	{
-		c_client->appendCache(buffer);
-		return;
-	} else {
-		buffer = c_client->getCache() + buffer;
-		c_client->clearCache();
+		client->appendCache(buffer);
+		return 1;
 	}
-	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
-	std::vector<std::string> command_args = split(buffer, '\n');
-	std::vector<std::vector<std::string> > args;
-	for (std::size_t i = 0; i < command_args.size(); i++)
+	buffer = client->getCache() + buffer;
+	client->clearCache();
+	return 0;
+}
+
+void Server::execute_commands(std::vector<std::string> c_commands, std::vector<std::vector<std::string> > args, int fd) {
+	for (std::size_t i = 0; i < c_commands.size(); i++)
 	{
-		args.push_back(split(command_args[i], ' '));
-		for (std::size_t j = 0; j < args[i].size(); j++)
-		{
-			for (std::size_t k = 0; k < args[i][j].size(); k++)
-			{
-				if (args[i][j][k] == '\r')
-				{
-					args[i][j].erase(k, 1);
-					break;
-				}
-			}
-		}
-	}
-	for (std::size_t i = 0; i < command_args.size(); i++)
-	{
-		std::cout << "Command received from " << fd << " : " << command_args[i] << std::endl;
+		std::cout << "Command received from " << fd << " : " << c_commands[i] << std::endl;
 		Command *cmd = getCommand(args[i][0]);
 		client_iterator it_c = _clients.find(fd);
 		if (it_c == _clients.end())
@@ -186,6 +156,51 @@ void Server::client_message(int fd) {
 		}
 		cmd->execute(client, args[i]);
 	}
+}
+
+Client *Server::get_client(int fd) {
+	client_iterator it = _clients.find(fd);
+	if (it == _clients.end())
+	{
+		std::cerr << "Client not found" << std::endl;
+		return NULL;
+	}
+	return it->second;
+}
+
+void Server::client_message(int fd) {
+	char c_buffer[1024] = {0};
+	std::size_t bytes_read = recv(fd, c_buffer, sizeof(c_buffer), 0);
+	if (bytes_read <= 0)
+	{
+		client_disconnect(fd);
+		return;
+	}
+	std::string buffer(c_buffer);
+	Client *client = get_client(fd);
+	if (client == NULL)
+		return;
+	if (handle_cache(buffer, client, bytes_read) == 1)
+		return;
+	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
+	std::vector<std::string> command_args = split(buffer, '\n');
+	std::vector<std::vector<std::string> > args;
+	for (std::size_t i = 0; i < command_args.size(); i++)
+	{
+		args.push_back(split(command_args[i], ' '));
+		for (std::size_t j = 0; j < args[i].size(); j++)
+		{
+			for (std::size_t k = 0; k < args[i][j].size(); k++)
+			{
+				if (args[i][j][k] == '\r')
+				{
+					args[i][j].erase(k, 1);
+					break;
+				}
+			}
+		}
+	}
+	execute_commands(command_args, args, fd);
 }
 
 std::string	Server::strToLower(const std::string &input)
@@ -316,10 +331,6 @@ int Server::create_socket() {
 
 	//std::runtime_error pour pouvoir catch les throw dans les blocs catch(const std::exception& e) sans avoir
 	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
-}
-
-std::map<std::string, Command *> Server::getCommands() const {
-	return _commands;
 }
 
 std::map<int, Client *> Server::getClients() const {
