@@ -131,18 +131,10 @@ int Server::handle_cache(std::string &buffer, Client *client, std::size_t bytes_
 	return 0;
 }
 
-void Server::execute_commands(std::vector<std::string> c_commands, std::vector<std::vector<std::string> > args, int fd) {
-	for (std::size_t i = 0; i < c_commands.size(); i++)
+void Server::execute_command(std::vector<std::vector<std::string> > args, Client *client) {
+	for (std::size_t i = 0; i < args.size(); i++)
 	{
-		std::cout << "Command received from " << fd << " : " << c_commands[i] << std::endl;
 		Command *cmd = getCommand(args[i][0]);
-		client_iterator it_c = _clients.find(fd);
-		if (it_c == _clients.end())
-		{
-			std::cerr << "Client not found" << std::endl;
-			return;
-		}
-		Client *client = it_c->second;
 		if (cmd == NULL)
 		{
 			std::cerr << "Command not found" << std::endl;
@@ -200,7 +192,11 @@ void Server::client_message(int fd) {
 			}
 		}
 	}
-	execute_commands(command_args, args, fd);
+	for (std::size_t i = 0; i < command_args.size(); i++)
+	{
+		std::cout << "Command received from " << fd << " : " << command_args[i] << std::endl;
+		execute_command(args, client);
+	}
 }
 
 std::string	Server::strToLower(const std::string &input)
