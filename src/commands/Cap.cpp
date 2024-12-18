@@ -1,6 +1,4 @@
 #include "Command.hpp"
-#include "numeric_error.hpp"
-#include "numeric_rpl.hpp"
 
 Cap::Cap(Server* server, bool auth) : Command(server, auth) {}
 

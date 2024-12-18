@@ -17,7 +17,8 @@
 #include <string>
 #include <unistd.h>
 #include <sys/socket.h>
-#include "codes.hpp"
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 
 class Server;
 
