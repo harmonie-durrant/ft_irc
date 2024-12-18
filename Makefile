@@ -10,8 +10,6 @@
 #                                                                              #
 # **************************************************************************** #
 
-# pa sutile
-
 SRC =	src/main.cpp				\
 		src/Server.cpp				\
 		src/Client.cpp				\
@@ -26,6 +24,7 @@ SRC =	src/main.cpp				\
 		src/commands/Quit.cpp		\
 		src/commands/User.cpp		\
 		src/commands/Whois.cpp		\
+		src/commands/Join.cpp		\
 
 OBJ = $(SRC:.cpp=.o)
 

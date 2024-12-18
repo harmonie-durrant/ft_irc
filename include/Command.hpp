@@ -16,6 +16,8 @@
 // Includes
 #include <iostream>
 #include <string>
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
 
@@ -130,4 +132,13 @@ public:
 	~Whois();
 
 	void    execute(class Client* client, std::vector<std::string> args);
+};
+
+class Join : public Command
+{
+public:
+	Join(class Server* server, bool auth);
+	~Join();
+
+	void	execute(class Client* client, std::vector<std::string> args);
 };

@@ -15,8 +15,8 @@
 Server::Server(int port, std::string password, std::string servername): _port(port), _password(password), _servername(servername) {
 	_commands["CAP"] = new Cap(this, false);
 	_commands["PASS"] = new Pass(this, false);
-	_commands["NICK"] = new Nick(this, true);
-	_commands["USER"] = new User(this, true);
+	_commands["NICK"] = new Nick(this, false);
+	_commands["USER"] = new User(this, false);
 	_commands["PRIVMSG"] = new Privmsg(this, true);
 	_commands["MODE"] = new Mode(this, true);
 	_commands["PART"] = new Part(this, true);
@@ -128,7 +128,6 @@ void Server::client_message(int fd) {
 		return;
 	}
 	std::string buffer(c_buffer);
-	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
 	client_iterator it_c = _clients.find(fd);
 	if (it_c == _clients.end())
 	{
@@ -144,7 +143,7 @@ void Server::client_message(int fd) {
 		buffer = c_client->getCache() + buffer;
 		c_client->clearCache();
 	}
-	std::cout << "New complete buffer recieved for " << fd << " is " << buffer << std::endl;
+	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
 	std::vector<std::string> command_args = split(buffer, '\n');
 	std::vector<std::vector<std::string> > args;
 	for (std::size_t i = 0; i < command_args.size(); i++)
@@ -179,7 +178,7 @@ void Server::client_message(int fd) {
 				|| client->getNickname().empty() || client->getUsername().empty()
 				|| client->getFullname().empty()) && args[i][0] != "USER" && args[i][0] != "NICK"))
 				{
-					client->send_response(451, this, client, ":You have not registered " + args[i][0]);
+					client->send_response(ERR_NOTREGISTERED, this, client, ":You have not registered" + args[i][0]);
 					return;
 				}
 				it->second->execute(client, args[i]);

@@ -29,6 +29,10 @@ void Nick::execute(Client* client, std::vector<std::string> args) {
 	}
 	client->setNickname(nickname);
 	client->send_response(-1, _server, client, ":" + oldnick + " NICK " + client->getNickname());
-	if (!client->getUsername().empty() && !client->getFullname().empty() && !client->getHostname().empty())
-		client->send_response(RPL_WELCOME, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
+	if (client->getNickname() != "" && client->getUsername() != "" && client->getHostname() != "" && client->getFullname() != "" && client->getPassOK() == true)
+	{
+		if (!client->getAuth())
+			client->send_response(RPL_WELCOME, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
+		client->setAuth(true);
+	}
 }

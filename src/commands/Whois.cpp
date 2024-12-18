@@ -18,6 +18,7 @@ void Whois::execute(Client* client, std::vector<std::string> args) {
 		client->send_response(ERR_NOORIGIN, _server, client, "Too many targets");
 		return;
 	}
+	// for every argument, check if it is a user or channel and print info accordingly
 	for (std::map<int, Client*>::iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
 	{
 		//! if user is hidden from WHOIS, break

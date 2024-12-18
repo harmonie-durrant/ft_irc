@@ -16,7 +16,7 @@
 Client::Client() : _auth(false), _fd(0), _port(0), _ip_addr("") {
 }
 
-Client::Client(int fd, std::string ip_addr, int port) : _auth(false), _fd(fd), _port(port), _ip_addr(ip_addr) {
+Client::Client(int fd, std::string ip_addr, int port) : _auth(false), _passok(false), _fd(fd), _port(port), _ip_addr(ip_addr) {
 }
 
 Client::~Client() {
@@ -71,6 +71,10 @@ bool Client::getAuth() const {
 	return _auth;
 }
 
+bool Client::getPassOK() const {
+	return _passok;
+}
+
 std::string Client::getNickname() const {
 	return _nickname;
 }
@@ -105,6 +109,10 @@ void Client::setFd(int fd) {
 
 void Client::setAuth(bool auth) {
 	_auth = auth;
+}
+
+void Client::setPassOK(bool ok) {
+	_passok = ok;
 }
 
 void Client::setIpAddr(std::string ip_addr) {
