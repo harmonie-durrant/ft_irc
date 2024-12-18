@@ -19,6 +19,7 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 	_commands["USER"] = new User(this, false);
 	_commands["PRIVMSG"] = new Privmsg(this, true);
 	_commands["MODE"] = new Mode(this, true);
+	_commands["JOIN"] = new Join(this, true);
 	_commands["PART"] = new Part(this, true);
 	_commands["PING"] = new Ping(this, true);
 	_commands["QUIT"] = new Quit(this, true);
@@ -163,28 +164,27 @@ void Server::client_message(int fd) {
 	}
 	for (std::size_t i = 0; i < command_args.size(); i++)
 	{
-		for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
+		std::cout << "Command received from " << fd << " : " << command_args[i] << std::endl;
+		Command *cmd = getCommand(args[i][0]);
+		client_iterator it_c = _clients.find(fd);
+		if (it_c == _clients.end())
 		{
-			if (args[i][0] == it->first)
-			{
-				client_iterator it_c = _clients.find(fd);
-				if (it_c == _clients.end())
-				{
-					std::cerr << "Client not found" << std::endl;
-					return;
-				}
-				Client *client = it_c->second;
-				if (it->second->auth_required() && ((!client->getAuth()
-				|| client->getNickname().empty() || client->getUsername().empty()
-				|| client->getFullname().empty()) && args[i][0] != "USER" && args[i][0] != "NICK"))
-				{
-					client->send_response(ERR_NOTREGISTERED, this, client, ":You have not registered" + args[i][0]);
-					return;
-				}
-				it->second->execute(client, args[i]);
-				break;
-			}
+			std::cerr << "Client not found" << std::endl;
+			return;
 		}
+		Client *client = it_c->second;
+		if (cmd == NULL)
+		{
+			std::cerr << "Command not found" << std::endl;
+			client->send_response(ERR_UNKNOWNCOMMAND, this, client, args[i][0] + " :Unknown command");
+			return;
+		}
+		if (cmd->auth_required() && !client->getAuth())
+		{
+			client->send_response(ERR_NOTREGISTERED, this, client, ":You have not registered" + args[i][0]);
+			return;
+		}
+		cmd->execute(client, args[i]);
 	}
 }
 
@@ -328,4 +328,12 @@ std::map<int, Client *> Server::getClients() const {
 
 std::string Server::getServername() const {
 	return _servername;
+}
+
+Command	*Server::getCommand(std::string command) {
+	Command *cmd = NULL;
+	command_iterator it = _commands.find(command);
+	if (it != _commands.end())
+		cmd = it->second;
+	return cmd;
 }
