@@ -177,7 +177,7 @@ void Server::client_message(int fd) {
 				|| client->getNickname().empty() || client->getUsername().empty()
 				|| client->getFullname().empty()) && args[i][0] != "USER" && args[i][0] != "NICK"))
 				{
-					client->send_response(451, this, client, ":You have not registered" + args[i][0]);
+					client->send_response(ERR_NOTREGISTERED, this, client, ":You have not registered" + args[i][0]);
 					return;
 				}
 				it->second->execute(client, args[i]);
