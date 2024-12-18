@@ -25,12 +25,22 @@ void Privmsg::execute(Client* client, std::vector<std::string> args) {
 				return;
 			}
 		}
-		client->send_response(ERR_NOSUCHNICK, _server, client, args[1] + " :No such nick/channel");
+		client->send_response(ERR_NOSUCHNICK, _server, client, args[1] + " :No such nick");
 		return;
 	}
-	//! for loop to send to every channel
-	// client->send_response(401, _server, client, args[1] + " :No such nick/channel");
+	// Channel *channel = client->getChannel(args[1]);
+	// if (channel == NULL)
+	// {
+	// 	client->send_response(ERR_NOSUCHCHANNEL, _server, client, args[1] + " :No such channel");
+	// 	return;
+	// }
+	// if (!channel->isOnChannel(client))
+	// {
+	// 	client->send_response(ERR_CANNOTSENDTOCHAN, _server, client, args[1] + " :Cannot send to channel");
+	// 	return;
+	// }
+	// channel->send_message(client, message);
 
-	// DEBUG, sends message back to sender as if they were the target
+	// TEMP, sends message back to sender as if they were the target
 	client->send_response(-1, _server, client, ":" + client->getNickname() + " PRIVMSG " + args[1] + " :" + message);
 }
