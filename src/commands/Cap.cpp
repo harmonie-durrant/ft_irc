@@ -1,4 +1,6 @@
 #include "Command.hpp"
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 
 Cap::Cap(Server* server, bool auth) : Command(server, auth) {}
 
@@ -22,5 +24,5 @@ void Cap::execute(Client* client, std::vector<std::string> args) {
 	}
 	if (args[1] == "END")
 		return;
-	client->send_response(410, _server, client, args[1] + " :Invalid CAP subcommand");
+	client->send_response(ERR_INVALIDCAPCMD, _server, client, args[1] + " :Invalid CAP subcommand");
 }

@@ -1,4 +1,6 @@
 #include "Command.hpp"
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 
 User::User(Server* server, bool auth) : Command(server, auth) {}
 
@@ -18,7 +20,7 @@ void User::execute(Client* client, std::vector<std::string> args) {
 	if (client->getNickname() != "" && client->getUsername() != "" && client->getHostname() != "" && client->getFullname() != "" && client->getPassOK() == true)
 	{
 		if (!client->getAuth())
-			client->send_response(001, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
+			client->send_response(RPL_WELCOME, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
 		client->setAuth(true);
 	}
 }
