@@ -1,8 +1,22 @@
+# example
 bircd/
 bircd.*
+
+# binary
 ircserv
-*.o
-*.a
+
+# vscode
 .vscode/
+
+# command creator
 example.cpp
 create_command
+
+# C++
+*.o
+*.a
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
