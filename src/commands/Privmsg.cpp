@@ -15,15 +15,14 @@ void Privmsg::execute(Client* client, std::vector<std::string> args) {
 	if (args[2][0] == ':')
 		args[2].erase(0, 1);
 	std::string message = args[2];
-	for (size_t i = 3; i < args.size(); i++)
-		message += " " + args[i];
+	if (args.size() > 3)
+		for (size_t i = 3; i < args.size(); i++)
+			message += " " + args[i];
 	if (args[1][0] != '#') {
-		for (std::map<int, Client*>::iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++) {
-			if (it->second->getNickname() == args[1]) {
-				Client *target = it->second;
-				target->send_response(-1, _server, target, ":" + client->getNickname() + " PRIVMSG " + target->getNickname() + " :" + message);
-				return;
-			}
+		Client *target = _server->get_client_by_nick(args[1]);
+		if (target != NULL) {
+			target->send_response(-1, _server, target, ":" + client->getNickname() + " PRIVMSG " + target->getNickname() + " :" + message);
+			return;
 		}
 		client->send_response(ERR_NOSUCHNICK, _server, client, args[1] + " :No such nick");
 		return;
