@@ -83,6 +83,7 @@ class Server {
 		std::map<int, Client *>				getClients() const;
 		std::string							getServername() const;
 		Command								*getCommand(std::string command);
+		Client								*get_client_by_nick(std::string nickname);
 
 		void start_server(void);
 

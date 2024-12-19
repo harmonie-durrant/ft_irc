@@ -344,3 +344,13 @@ Command	*Server::getCommand(std::string command) {
 		cmd = it->second;
 	return cmd;
 }
+
+Client *Server::get_client_by_nick(std::string nickname) {
+	client_iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		if (it->second->getNickname() == nickname)
+			return it->second;
+	}
+	return NULL;
+}
