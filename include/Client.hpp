@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: froque <froque@student.42.fr>              +#+  +:+       +#+        */
+/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 12:28:42 by froque            #+#    #+#             */
-/*   Updated: 2024/12/10 12:28:46 by froque           ###   ########.fr       */
+/*   Updated: 2024/12/15 18:05:15 by fguillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Client {
 		~Client();
 
 		void send_response(int code, Server *server, Client *client, std::string msg);
+		void send_message(std::string msg);
 
 		// Getters
 		std::string	getNickname(void) const;

@@ -16,7 +16,7 @@ void Privmsg::execute(Client* client, std::vector<std::string> args) {
 	for (size_t i = 3; i < args.size(); i++)
 		message += " " + args[i];
 	if (args[1][0] != '#') {
-		for (std::map<int, Client*>::iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++) {
+		for (std::map<int, Client*>::const_iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++) {
 			if (it->second->getNickname() == args[1]) {
 				Client *target = it->second;
 				target->send_response(-1, _server, target, ":" + client->getNickname() + " PRIVMSG " + target->getNickname() + " :" + message);

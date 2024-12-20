@@ -16,7 +16,7 @@ void Whois::execute(Client* client, std::vector<std::string> args) {
 		client->send_response(409, _server, client, "Too many targets");
 		return;
 	}
-	for (std::map<int, Client*>::iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
+	for (std::map<int, Client*>::const_iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
 	{
 		//! if user is hidden from WHOIS, break
 		if (it->second->getNickname() == args[1])

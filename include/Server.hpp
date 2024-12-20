@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: froque <froque@student.42.fr>              +#+  +:+       +#+        */
+/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:05:51 by froque            #+#    #+#             */
-/*   Updated: 2024/12/10 13:05:53 by froque           ###   ########.fr       */
+/*   Updated: 2024/12/15 20:07:04 by fguillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 class Server {
 
 	typedef std::vector<pollfd>::iterator       pfd_iterator;	// pour les recherches dans le tableau _pfds sand devoir reecrire "std::vector<pollfd>::iterator" a chaque fois
-	//typedef std::vector<Channel *>::iterator    channel_iterator;
+	typedef std::vector<Channel *>::iterator    channel_iterator;
     typedef std::map<int, Client *>::iterator   client_iterator;
 
 	private:
@@ -46,7 +46,7 @@ class Server {
 		std::string			_servername;
 
 		std::vector<pollfd>     _pfds;		// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
-		//std::vector<Channel *>  _channels;
+		std::vector<Channel *>  _channels;
 		std::map<int, Client *> _clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
 
 		/*
@@ -68,10 +68,11 @@ class Server {
 
 		bool	nicknameExist(std::string nickname);
 
-		int getPort() const;
-		std::string getPassword() const;
-		std::map<int, Client *> getClients() const;
-		std::string getServername() const;
+		int 			getPort() const;
+		std::string		getPassword() const;
+		Client*		 	getClient(std::string client_name) const;
+		std::string		getServername() const;
+		Channel*		getChannel(std::string channel_name);
 
 		void start_server(void);
 

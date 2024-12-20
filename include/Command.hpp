@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: froque <froque@student.42.fr>              +#+  +:+       +#+        */
+/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:05:44 by froque            #+#    #+#             */
-/*   Updated: 2024/12/10 13:05:46 by froque           ###   ########.fr       */
+/*   Updated: 2024/12/15 17:22:00 by fguillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,4 +122,58 @@ public:
 	~Whois();
 
 	void    execute(class Client* client, std::vector<std::string> args);
+};
+
+class Kick : public Command 
+{
+public:
+    Kick(class Server* server, bool auth);
+	~Kick();
+
+    void	execute(Client* client, std::vector<std::string> args);
+};
+
+class Invite : public Command 
+{
+public:
+    Invite(class Server* server, bool auth);
+	~Invite();
+
+    void	execute(Client* client, std::vector<std::string> args);
+};
+
+class Topic : public Command 
+{
+public:
+    Topic(class Server* server, bool auth);
+	~Topic();
+
+    void	execute(Client* client, std::vector<std::string> args);
+};
+
+class Mode : public Command 
+{
+public:
+    Mode(class Server* server, bool auth);
+	~Mode();
+
+    void	execute(Client* client, std::vector<std::string> args);
+};
+
+class Join : public Command 
+{
+public:
+    Join(class Server* server, bool auth);
+	~Join();
+
+    void	execute(Client* client, std::vector<std::string> args);
+};
+
+class Part : public Command 
+{
+public:
+    Part(class Server* server, bool auth);
+	~Part();
+
+    void	execute(Client* client, std::vector<std::string> args);
 };

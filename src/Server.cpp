@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: froque <froque@student.42.fr>              +#+  +:+       +#+        */
+/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:44 by froque            #+#    #+#             */
-/*   Updated: 2024/12/10 13:57:45 by froque           ###   ########.fr       */
+/*   Updated: 2024/12/16 12:54:39 by fguillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,12 +113,20 @@ void Server::client_message(int fd)
 	commands["CAP"] = new Cap(this, false);
 	commands["PASS"] = new Pass(this, false);
 	commands["NICK"] = new Nick(this, true);
-	commands["USER"] = new User(this, true);
+	commands["USER"] = new User(this, true);	
 	commands["PRIVMSG"] = new Privmsg(this, true);
 	commands["MODE"] = new Mode(this, true);
 	commands["PING"] = new Ping(this, true);
 	commands["QUIT"] = new Quit(this, true);
 	commands["WHOIS"] = new Whois(this, true);
+	//for channels
+	commands["KICK"] = new Kick(this, true);
+	commands["INVITE"] = new Invite(this, true);
+	commands["TOPIC"] = new Topic(this, true);
+	//commands["MODE"] = new Mode(this, true);
+	commands["JOIN"] = new Join(this, true);
+	commands["PART"] = new Part(this, true);
+
 	std::vector<std::string> command_args = split(buffer, '\n');
 	std::vector<std::vector<std::string> > args;
 	for (std::size_t i = 0; i < command_args.size(); i++)
@@ -280,10 +288,26 @@ int Server::create_socket() {
 	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
 }
 
-std::map<int, Client *> Server::getClients() const {
-	return _clients;
+Client*		Server::getClient(std::string client_name)
+{
+	for (client_iterator it = _clients.begin(); it != _clients.end(); ++it) 
+	{
+        if (it->second->getNickname() == client_name)
+            return it->second;
+    }
+    return NULL;
 }
 
 std::string Server::getServername() const {
 	return _servername;
+}
+
+Channel*	Server::getChannel(std::string channel_name)
+{
+    for (channel_iterator it = _channels.begin(); it != _channels.end(); ++it) 
+	{
+        if ((*it)->getName() == channel_name)
+            return *it;
+    }
+    return NULL;
 }
