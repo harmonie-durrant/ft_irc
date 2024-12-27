@@ -52,6 +52,8 @@ void Client::send_response(int code, Client *client, std::string msg) {
 	send(_fd, response.c_str(), response.length(), 0);
 }
 
+/* GETTERS */
+
 int Client::getFd() const {
 	return _fd;
 }
@@ -96,6 +98,31 @@ std::string Client::getCache() const {
 	return _cache;
 }
 
+std::vector<std::string> Client::getChannels() const {
+	return _channels;
+}
+
+/* SETTERS */
+
+// channels
+
+void Client::removeChannel(std::string channel) {
+	std::vector<std::string>::iterator it = _channels.begin();
+	while (it != _channels.end()) {
+		if (*it == channel) {
+			_channels.erase(it);
+			return;
+		}
+		++it;
+	}
+}
+
+void Client::addChannel(std::string channel) {
+	_channels.push_back(channel);
+}
+
+// cache
+
 void Client::clearCache() {
 	_cache = "";
 }
@@ -103,6 +130,8 @@ void Client::clearCache() {
 void Client::appendCache(std::string str) {
 	_cache = _cache + str;
 }
+
+// other setters
 
 void Client::setFd(int fd) {
 	_fd = fd;

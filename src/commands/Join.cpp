@@ -72,6 +72,6 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 	// 	return;
 	// }
 	channel->addClient(client);
-	// client->add_channel(channel);
+	client->addChannel(channel->getName());
 	// send client the channel info... MODE, RPL_TOPIC, RPL_TOPICTIME, one or more RPL_NAMREPLY, RPL_ENDOFNAMES ...
 }
