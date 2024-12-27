@@ -36,7 +36,7 @@ class Channel
 		bool					_t;		//TOPIC command only for operators
 
 	public:
-		Channel(std::string& name, std::string& key, Client* creator);
+		Channel(std::string name, std::string key, Client* creator);
 		~Channel();
 
 		void					setName(std::string name);

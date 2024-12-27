@@ -330,6 +330,10 @@ int Server::create_socket() {
 	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
 }
 
+void Server::addChannel(Channel *channel) {
+	_channels.push_back(channel);
+}
+
 Client*		Server::get_client_by_nick(std::string client_nickname)
 {
 	for (client_iterator it = _clients.begin(); it != _clients.end(); ++it) 
@@ -364,6 +368,10 @@ Command	*Server::getCommand(std::string command) {
 
 std::map<int, Client *> Server::getClients() const {
 	return _clients;
+}
+
+std::vector<Channel *> Server::getChannels() const {
+	return _channels;
 }
 
 

@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string& name, std::string& key, Client* creator): _name(name), _key(key), _topic(""), _l(0), _i(false), _t(false)
+Channel::Channel(std::string name, std::string key, Client* creator): _name(name), _key(key), _topic(""), _l(0), _i(false), _t(false)
 {
 	_operators.push_back(creator);
 	_clients.push_back(creator);
@@ -33,14 +33,24 @@ bool	Channel::getTopicMode() const		{ return _t; }
 void	Channel::addClient(Client* client)
 {
     if (std::find(_clients.begin(), _clients.end(), client) == _clients.end())
+	{
         _clients.push_back(client);
+	}
+	// send to all except the new client
+	std::string message = ":" + client->getNickname() + " JOIN " + _name;
+	broadcast(message, client);
 }
 
 void	Channel::removeClient(Client* client)
 {
     std::vector<Client*>::iterator it = std::find(_clients.begin(), _clients.end(), client);
     if (it != _clients.end())
+	{
         _clients.erase(it);
+	}
+	// send to all except the leaving client
+	std::string message = ":" + client->getNickname() + " PART " + _name;
+	broadcast(message, client);
 }
 
 void    Channel::addOperator(Client* client)

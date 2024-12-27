@@ -82,6 +82,8 @@ class Server {
 		int			handle_cache(std::string &buffer, Client *client, std::size_t bytes_read);
 		void		execute_command(std::vector<std::vector<std::string> > args, Client *client);
 
+		void		addChannel(Channel *channel);
+
 		int 			getPort() const;
 		std::string		getPassword() const;
 		std::string		getServername() const;
@@ -90,6 +92,7 @@ class Server {
 		std::string	strToLower(const std::string &input);
 		std::map<std::string, Command *>	getCommands() const;
 		std::map<int, Client *>				getClients() const;
+		std::vector<Channel *>				getChannels() const;
 		Command								*getCommand(std::string command);
 		Client								*get_client_by_nick(std::string nickname);
 
