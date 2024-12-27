@@ -46,7 +46,7 @@ class Client {
 		void send_response(int code, Client *client, std::string msg);
 		void send_message(std::string msg);
 
-		// Getters
+		/* GETTERS */
 		std::string					getNickname(void) const;
 		std::string					getUsername(void) const;
 		std::string					getFullname(void) const;
@@ -59,19 +59,22 @@ class Client {
 		int							getPort() const;
 		std::string					getCache() const;
 		std::vector<std::string>	getChannels() const;
-		// Setters
+
+		/* SETTERS */
 		void	setNickname(std::string nickname);
 		void	setUsername(std::string username);
 		void	setFullname(std::string fullname);
 		void	setServerName(std::string hostname);
 		void	setHostname(std::string hostname);
-		// Channels
+		
+		/* METHODS */
 		void	addChannel(std::string channel);
 		void	removeChannel(std::string channel);
 		void	removeChannels(Server *server);
-		// cache
-		void	clearCache();	// vider le cache
-		void	appendCache(std::string str); // concatoner des strings dans le cache
+	
+		void	clearCache();
+		void	appendCache(std::string str);
+
 		void	setPassOK(bool ok);
 		void	setAuth(bool auth);
 		void	setFd(int fd);

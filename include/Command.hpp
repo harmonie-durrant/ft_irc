@@ -23,27 +23,23 @@
 
 class Command
 {
-private:
-	/* data */
-protected:
-	class Server*	_server;
-	bool	_auth;
-	Command();
-	Command(const Command &copy);
-public:
-	// Constructors
-	explicit Command(class Server* Server, bool auth);
-	// Destructors
-	virtual ~Command();
-	// Overloaded Operators
-	// Public Methods
-	bool 			auth_required() const;
-	virtual void	execute(class Client* client, std::vector<std::string> args) = 0;
-	// Setters
-	// Getter
-	// Exceptions
+	protected:
+		class Server*	_server;
+		bool	_auth;
+		Command();
+		Command(const Command &copy);
+
+	public:
+		/* CONSTRUCT DECONSTRUCT */
+		explicit Command(class Server* Server, bool auth);
+		virtual ~Command();
+		/* GETTERS */
+		bool 			auth_required() const;
+		/* METHODS */
+		virtual void	execute(class Client* client, std::vector<std::string> args) = 0;
 };
-// Ostream Overload
+
+/* COMMAND CLASSES */
 
 class Cap : public Command
 {

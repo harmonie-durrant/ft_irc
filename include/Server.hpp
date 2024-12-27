@@ -44,64 +44,53 @@ class Channel;
 class Client;
 
 class Server {
-
-	typedef std::vector<pollfd>::iterator       pfd_iterator;	// pour les recherches dans le tableau _pfds sand devoir reecrire "std::vector<pollfd>::iterator" a chaque fois
+	typedef std::vector<pollfd>::iterator       pfd_iterator;
 	typedef std::vector<Channel *>::iterator    channel_iterator;
     typedef std::map<int, Client *>::iterator   client_iterator;
 	typedef std::map<std::string, Command *>::iterator command_iterator;
 
 	private:
-		int 				_port;
-		const std::string	_password;
-		int					_server_fd;			// fd du socket serveur
-		std::string			_servername;
-
-		std::vector<pollfd>     _pfds;		// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
-		std::vector<Channel *>  _channels;
-		std::map<int, Client *> _clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
-		std::map<std::string, Command *> _commands;
-
-		/*
-		struct pollfd {
-			int fd;         			// Descripteur de fichier à surveiller
-			short events;   			// Événements à surveiller
-			short revents;  			// Événements détectés (rempli par poll() )
-		};
-		*/
+		int 								_port;
+		const std::string					_password;
+		int									_server_fd;
+		std::string							_servername;
+		std::vector<pollfd>					_pfds;
+		std::vector<Channel *>				_channels;
+		std::map<int, Client *>				_clients;
+		std::map<std::string, Command *>	_commands;
 
 	public:
+		/* CONSTRUCT DECONSTRUCT */
 		Server(int port, std::string password, std::string servername);
 		~Server();
 
-		int		create_socket();				// fonction qui creer et retourne le socket serveur
-		void	client_connect();
-		void	client_disconnect(int fd);
-		void	client_message(int fd);
-
-		bool	nicknameExist(std::string nickname);
+		/* METHODS */
+		void		start_server(void);
+		int			create_socket();
+		void		client_connect();
+		void		client_disconnect(int fd);
+		void		client_message(int fd);
+		bool		nicknameExist(std::string nickname);
 		int			handle_cache(std::string &buffer, Client *client, std::size_t bytes_read);
 		void		execute_command(std::vector<std::vector<std::string> > args, Client *client);
-
 		void		addChannel(Channel *channel);
-
-		int 			getPort() const;
-		std::string		getPassword() const;
-		std::string		getServername() const;
-		Channel*		getChannel(std::string channel_name);
-		Client			*get_client(int fd);
 		std::string	strToLower(const std::string &input);
-		std::map<std::string, Command *>	getCommands() const;
-		std::map<int, Client *>				getClients() const;
-		std::vector<Channel *>				getChannels() const;
-		Command								*getCommand(std::string command);
-		Client								*get_client_by_nick(std::string nickname);
-
-		void start_server(void);
-
 		//void addClient(Client client);
 		//void removeClient(Client client);
 
-		// exception server closed
+		/* GETTERS */
+		int 								getPort() const;
+		std::string							getPassword() const;
+		std::string							getServername() const;
+		Channel*							getChannel(std::string channel_name);
+		Client*								get_client(int fd);
+		std::map<std::string, Command *>	getCommands() const; //! not defined
+		std::map<int, Client *>				getClients() const;
+		std::vector<Channel *>				getChannels() const;
+		Command*							getCommand(std::string command);
+		Client*								get_client_by_nick(std::string nickname);
+
+		/* EXCEPTIONS */
 		class ServerClosed : public std::exception {
 			public:
 				virtual const char *what() const throw() {
@@ -110,6 +99,7 @@ class Server {
 		};
 };
 
+/* UTILS */
 std::vector<std::string>	split(const std::string str, char delimiter);
 
 #endif
