@@ -111,14 +111,28 @@ void Client::removeChannel(std::string channel) {
 	while (it != _channels.end()) {
 		if (*it == channel) {
 			_channels.erase(it);
+			// send part to client
+			send_response(-1, this, ":" + _nickname + " PART " + channel);
 			return;
 		}
 		++it;
 	}
+	send_response(ERR_NOTONCHANNEL, this, channel + " :You're not on that channel");
 }
 
 void Client::addChannel(std::string channel) {
 	_channels.push_back(channel);
+}
+
+void Client::removeChannels(Server *server) {
+	std::vector<std::string>::iterator it = _channels.begin();
+	while (it != _channels.end()) {
+		// remove user from channel sending PART to all users in channel
+		server->getChannel(*it)->removeClient(this);
+		// remove channel from user
+		removeChannel(*it);
+		++it;
+	}
 }
 
 // cache

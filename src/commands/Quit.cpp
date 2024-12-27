@@ -13,5 +13,6 @@ void Quit::execute(Client* client, std::vector<std::string> args) {
 	// envoyer un message sur tous les channels auquels le clients est connecte
 	// exple msg sur channel : froque [~froque@169.155.250.35] has quit [Client Quit]
 	// si il est le dernier membre du channel il faut le fermer
+	client->removeChannels(_server);
 	_server->client_disconnect(client->getFd());
 }

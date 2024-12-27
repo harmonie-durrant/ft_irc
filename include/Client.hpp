@@ -17,6 +17,7 @@
 #include <string>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <vector>
 #include "numeric_error.hpp"
 #include "numeric_rpl.hpp"
 
@@ -67,6 +68,7 @@ class Client {
 		// Channels
 		void	addChannel(std::string channel);
 		void	removeChannel(std::string channel);
+		void	removeChannels(Server *server);
 		// cache
 		void	clearCache();	// vider le cache
 		void	appendCache(std::string str); // concatoner des strings dans le cache
