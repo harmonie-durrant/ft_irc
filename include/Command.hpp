@@ -16,6 +16,8 @@
 // Includes
 #include <iostream>
 #include <string>
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
 
@@ -84,6 +86,14 @@ class Mode : public Command
 public:
 	Mode(class Server* server, bool auth);
 	~Mode();
+
+	void	execute(class Client* client, std::vector<std::string> args);
+};
+class Part : public Command
+{
+public:
+	Part(class Server* server, bool auth);
+	~Part();
 
 	void	execute(class Client* client, std::vector<std::string> args);
 };

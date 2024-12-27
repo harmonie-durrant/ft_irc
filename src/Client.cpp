@@ -16,7 +16,7 @@
 Client::Client() : _auth(false), _fd(0), _port(0), _ip_addr("") {
 }
 
-Client::Client(int fd, std::string ip_addr, int port) : _auth(false), _fd(fd), _port(port), _ip_addr(ip_addr) {
+Client::Client(int fd, std::string ip_addr, int port) : _auth(false), _passok(false), _fd(fd), _port(port), _ip_addr(ip_addr) {
 }
 
 Client::~Client() {
@@ -49,6 +49,8 @@ void Client::send_response(int code, Server *server, Client *client, std::string
 	else if (code < 100)
 		s_code = "0" + s_code;
 	response = ":" + servername + " " + s_code + " " + nick + " " + msg + "\r\n";
+	if (nick.empty())
+		response = ":" + servername + " " + s_code + " " + msg + "\r\n";
 	std::cout << _fd << "==> " << response << std::endl;
 	send(_fd, response.c_str(), response.length(), 0);
 }
@@ -69,6 +71,10 @@ bool Client::getAuth() const {
 	return _auth;
 }
 
+bool Client::getPassOK() const {
+	return _passok;
+}
+
 std::string Client::getNickname() const {
 	return _nickname;
 }
@@ -85,12 +91,28 @@ std::string Client::getHostname() const {
 	return _hostname;
 }
 
+std::string Client::getCache() const {
+	return _cache;
+}
+
+void Client::clearCache() {
+	_cache = "";
+}
+
+void Client::appendCache(std::string str) {
+	_cache = _cache + str;
+}
+
 void Client::setFd(int fd) {
 	_fd = fd;
 }
 
 void Client::setAuth(bool auth) {
 	_auth = auth;
+}
+
+void Client::setPassOK(bool ok) {
+	_passok = ok;
 }
 
 void Client::setIpAddr(std::string ip_addr) {

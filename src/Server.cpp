@@ -13,12 +13,41 @@
 #include "Server.hpp"
 
 Server::Server(int port, std::string password, std::string servername): _port(port), _password(password), _servername(servername) {
+	commands["CAP"] = new Cap(this, false);
+	commands["PASS"] = new Pass(this, false);
+	commands["NICK"] = new Nick(this, true);
+	commands["USER"] = new User(this, true);	
+	commands["PRIVMSG"] = new Privmsg(this, true);
+	commands["MODE"] = new Mode(this, true);
+	commands["PING"] = new Ping(this, true);
+	commands["QUIT"] = new Quit(this, true);
+	commands["WHOIS"] = new Whois(this, true);
+	//for channels
+	commands["KICK"] = new Kick(this, true);
+	commands["INVITE"] = new Invite(this, true);
+	commands["TOPIC"] = new Topic(this, true);
+	//commands["MODE"] = new Mode(this, true);
+	commands["JOIN"] = new Join(this, true);
+	commands["PART"] = new Part(this, true);
 	_server_fd = create_socket();
 	std::cout << "Starting server on port " << port << std::endl;
 }
 
 Server::~Server() {
-	std::cout << "Server shutting down" << std::endl;
+	std::cout << "Server shutting down..." << std::endl;
+	for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
+		delete it->second;
+	// for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
+	// 	delete *it;
+	std::cout << "Disconnecting clients..." << std::endl;
+	client_iterator it = _clients.begin();
+	while (it != _clients.end()) {
+		this->client_disconnect(it->first);
+		it = _clients.begin();
+	}
+	std::cout << "Closing server socket..." << std::endl;
+	close(_server_fd);
+	std::cout << "Server shut down, goodbye!" << std::endl;
 }
 
 int Server::getPort() const {
@@ -33,8 +62,7 @@ std::string Server::getPassword() const {
 	return _password;
 }
 
-void Server::client_disconnect(int fd)
-{
+void Server::client_disconnect(int fd) {
 	std::cout << "Client fd " << fd << " disconnected" << std::endl;
 
 	client_iterator it_c = _clients.find(fd);
@@ -56,8 +84,7 @@ void Server::client_disconnect(int fd)
     }
 }
 
-void Server::client_connect(void)
-{
+void Server::client_connect(void) {
 	int         client_fd;
     sockaddr_in addr;
     socklen_t   addr_len = sizeof(addr);
@@ -98,34 +125,62 @@ std::vector<std::string> split(const std::string& str, char delimiter) {
 	return tokens;
 }
 
-void Server::client_message(int fd)
-{
+int Server::handle_cache(std::string &buffer, Client *client, std::size_t bytes_read) {
+	if (buffer[bytes_read - 1] != '\n')
+	{
+		client->appendCache(buffer);
+		return 1;
+	}
+	buffer = client->getCache() + buffer;
+	client->clearCache();
+	return 0;
+}
+
+void Server::execute_command(std::vector<std::vector<std::string> > args, Client *client) {
+	for (std::size_t i = 0; i < args.size(); i++)
+	{
+		Command *cmd = getCommand(args[i][0]);
+		if (cmd == NULL)
+		{
+			std::cerr << "Command not found" << std::endl;
+			client->send_response(ERR_UNKNOWNCOMMAND, this, client, args[i][0] + " :Unknown command");
+			return;
+		}
+		if (cmd->auth_required() && !client->getAuth())
+		{
+			client->send_response(ERR_NOTREGISTERED, this, client, ":You have not registered" + args[i][0]);
+			return;
+		}
+		cmd->execute(client, args[i]);
+	}
+}
+
+Client *Server::get_client(int fd) {
+	client_iterator it = _clients.find(fd);
+	if (it == _clients.end())
+	{
+		std::cerr << "Client not found" << std::endl;
+		return NULL;
+	}
+	return it->second;
+}
+
+void Server::client_message(int fd) {
 	char c_buffer[1024] = {0};
-	int bytes_read = recv(fd, c_buffer, sizeof(c_buffer), 0);
+	std::size_t bytes_read = recv(fd, c_buffer, sizeof(c_buffer), 0);
 	if (bytes_read <= 0)
 	{
 		client_disconnect(fd);
 		return;
 	}
 	std::string buffer(c_buffer);
+	Client *client = get_client(fd);
+	if (client == NULL)
+		return;
+	if (handle_cache(buffer, client, bytes_read) == 1)
+		return;
 	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
 	std::map<std::string, Command *> commands;
-	commands["CAP"] = new Cap(this, false);
-	commands["PASS"] = new Pass(this, false);
-	commands["NICK"] = new Nick(this, true);
-	commands["USER"] = new User(this, true);	
-	commands["PRIVMSG"] = new Privmsg(this, true);
-	commands["MODE"] = new Mode(this, true);
-	commands["PING"] = new Ping(this, true);
-	commands["QUIT"] = new Quit(this, true);
-	commands["WHOIS"] = new Whois(this, true);
-	//for channels
-	commands["KICK"] = new Kick(this, true);
-	commands["INVITE"] = new Invite(this, true);
-	commands["TOPIC"] = new Topic(this, true);
-	//commands["MODE"] = new Mode(this, true);
-	commands["JOIN"] = new Join(this, true);
-	commands["PART"] = new Part(this, true);
 
 	std::vector<std::string> command_args = split(buffer, '\n');
 	std::vector<std::vector<std::string> > args;
@@ -146,32 +201,36 @@ void Server::client_message(int fd)
 	}
 	for (std::size_t i = 0; i < command_args.size(); i++)
 	{
-		std::map<std::string, Command *>::iterator it;
-		for (it = commands.begin(); it != commands.end(); it++)
-		{
-			if (args[i][0] == it->first)
-			{
-				client_iterator it_c = _clients.find(fd);
-				if (it_c == _clients.end())
-				{
-					std::cerr << "Client not found" << std::endl;
-					return;
-				}
-				Client *client = it_c->second;
-				if (it->second->auth_required() && ((!client->getAuth()
-				|| client->getNickname().empty() || client->getUsername().empty()
-				|| client->getFullname().empty()) && args[i][0] != "USER" && args[i][0] != "NICK"))
-				{
-					client->send_response(451, this, client, ":You have not registered" + args[i][0]);
-					return;
-				}
-				it->second->execute(client, args[i]);
-				break;
-			}
-		}
+		std::cout << "Command received from " << fd << " : " << command_args[i] << std::endl;
+		execute_command(args, client);
 	}
 }
 
+std::string	Server::strToLower(const std::string &input)
+{
+	std::string	inputLower = input;
+
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		inputLower[i] = std::tolower(static_cast<unsigned char>(input[i]));
+	}
+	return (inputLower);
+}
+
+
+bool	Server::nicknameExist(std::string nickname)
+{
+	client_iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		std::string tempNickname = strToLower(it->second->getNickname());
+		if (tempNickname == strToLower(nickname))
+			return true;
+	}
+	return false;
+}
+
+/*
 bool	Server::nicknameExist(std::string nickname)
 {
 	client_iterator it;
@@ -181,20 +240,10 @@ bool	Server::nicknameExist(std::string nickname)
 			return true;
 	}
 	return false;
-// verif si le nick name est deja pris si oui rajouter un _ a la fin
-//
-// avec la cmd nick mais aussi a la connection au serveur
-// Mess a la connection
-// Irssi: Your nickname is froque_
-// Mess retour cmd nick
-// Irssi: Your nick is in use by froque [~froque@evolu.net-7A04F0D5.ftth.fr.orangecustomers.net]
-// voir si limite en nbre de char
 }
-
+*/
 void Server::start_server(void)
 {
-	//std::cout << "Server start : Hostname : ???? port :" << this->getPort() << std::endl;
-
 	pollfd server_poll_fd = {_server_fd, POLLIN, 0};
     _pfds.push_back(server_poll_fd);
 
@@ -243,7 +292,6 @@ void Server::removeClient(Client client) {
 		it++;
 	}
 }*/
-
 
 int Server::create_socket() {
 
@@ -310,4 +358,22 @@ Channel*	Server::getChannel(std::string channel_name)
             return *it;
     }
     return NULL;
+}
+
+Command	*Server::getCommand(std::string command) {
+	Command *cmd = NULL;
+	command_iterator it = _commands.find(command);
+	if (it != _commands.end())
+		cmd = it->second;
+	return cmd;
+}
+
+Client *Server::get_client_by_nick(std::string nickname) {
+	client_iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		if (it->second->getNickname() == nickname)
+			return it->second;
+	}
+	return NULL;
 }

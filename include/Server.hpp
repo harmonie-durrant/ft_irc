@@ -28,10 +28,14 @@
 #include <arpa/inet.h>          // pour inet_ntoa()
 #include <csignal>				// pour signal()
 #include <memory>				// pour std::unique_ptr
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 #include "Command.hpp"
 #include "Client.hpp"
 
 #define MAX_CLIENTS 1000		// valeur au hasard, a redefinir, mais il faut une valeur max pour listen()
+
+class Command;
 
 class Server {
 
@@ -67,12 +71,19 @@ class Server {
 		void	client_message(int fd);
 
 		bool	nicknameExist(std::string nickname);
+		int			handle_cache(std::string &buffer, Client *client, std::size_t bytes_read);
+		void		execute_command(std::vector<std::vector<std::string> > args, Client *client);
 
 		int 			getPort() const;
 		std::string		getPassword() const;
 		Client*		 	getClient(std::string client_name) const;
 		std::string		getServername() const;
 		Channel*		getChannel(std::string channel_name);
+		std::string	strToLower(const std::string &input);
+		std::map<std::string, Command *>	getCommands() const;
+		std::map<int, Client *>				getClients() const;
+		Command								*getCommand(std::string command);
+		Client								*get_client_by_nick(std::string nickname);
 
 		void start_server(void);
 

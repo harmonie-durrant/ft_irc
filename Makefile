@@ -18,11 +18,13 @@ SRC =	src/main.cpp				\
 		src/commands/Mode.cpp		\
 		src/commands/Nick.cpp		\
 		src/commands/Pass.cpp		\
+		src/commands/Part.cpp		\
 		src/commands/Privmsg.cpp	\
 		src/commands/Ping.cpp		\
 		src/commands/Quit.cpp		\
 		src/commands/User.cpp		\
 		src/commands/Whois.cpp		\
+		src/commands/Join.cpp		\
 
 OBJ = $(SRC:.cpp=.o)
 

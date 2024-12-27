@@ -17,6 +17,8 @@
 #include <string>
 #include <unistd.h>
 #include <sys/socket.h>
+#include "numeric_error.hpp"
+#include "numeric_rpl.hpp"
 
 class Server;
 
@@ -27,9 +29,11 @@ class Client {
 		std::string	_fullname;
 		std::string	_hostname;
 		bool		_auth;
+		bool		_passok;
 		int			_fd;
 		int			_port;		//apparemment peu utile de recuperer le port, on verra si on garde ou pas
-		std::string _ip_addr;
+		std::string	_ip_addr;
+		std::string	_cache;
 
 	public:
 		Client();
@@ -41,21 +45,26 @@ class Client {
 
 		// Getters
 		std::string	getNickname(void) const;
-		std::string getUsername(void) const;
-		std::string getFullname(void) const;
-		std::string getHostname(void) const;
+		std::string	getUsername(void) const;
+		std::string	getFullname(void) const;
+		std::string	getHostname(void) const;
 		bool		getAuth() const;
+		bool		getPassOK() const;
 		int			getFd() const;
-		std::string getIpAddr() const;
+		std::string	getIpAddr() const;
 		int			getPort() const;
+		std::string	getCache() const;
 		// Setters
-		void setNickname(std::string nickname);
-		void setUsername(std::string username);
-		void setFullname(std::string fullname);
-		void setHostname(std::string hostname);
-		void setAuth(bool auth);
-		void setFd(int fd);
-		void setIpAddr(std::string ip_addr);
+		void	setNickname(std::string nickname);
+		void	setUsername(std::string username);
+		void	setFullname(std::string fullname);
+		void	setHostname(std::string hostname);
+		void	clearCache();	// vider le cache
+		void	appendCache(std::string str); // concatoner des strings dans le cache
+		void	setPassOK(bool ok);
+		void	setAuth(bool auth);
+		void	setFd(int fd);
+		void	setIpAddr(std::string ip_addr);
 };
 
 #endif
