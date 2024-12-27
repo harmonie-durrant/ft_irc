@@ -37,8 +37,8 @@ Server::~Server() {
 	
 	for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
 		delete it->second;
-	// for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
-	// 	delete *it;
+	for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
+		delete *it;
 	std::cout << "Disconnecting clients..." << std::endl;
 	client_iterator it = _clients.begin();
 	while (it != _clients.end()) {
