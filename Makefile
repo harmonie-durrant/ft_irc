@@ -13,7 +13,10 @@
 SRC =	src/main.cpp				\
 		src/Server.cpp				\
 		src/Client.cpp				\
+		src/Channel.cpp				\
 		src/Command.cpp				\
+		src/commands/Invite.cpp		\
+		src/commands/Kick.cpp		\
 		src/commands/Cap.cpp		\
 		src/commands/Mode.cpp		\
 		src/commands/Nick.cpp		\

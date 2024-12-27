@@ -21,7 +21,7 @@ Part::~Part() {}
 void Part::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 2)
 	{
-		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
+		client->send_response(ERR_NEEDMOREPARAMS, client, args[0] + " :Not enough parameters");
 		return;
 	}
 }

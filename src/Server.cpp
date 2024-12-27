@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: froque <froque@student.42.fr>              +#+  +:+       +#+        */
+/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:44 by froque            #+#    #+#             */
-/*   Updated: 2024/12/10 13:57:45 by froque           ###   ########.fr       */
+/*   Updated: 2024/12/16 12:54:39 by fguillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,25 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 	_commands["CAP"] = new Cap(this, false);
 	_commands["PASS"] = new Pass(this, false);
 	_commands["NICK"] = new Nick(this, false);
-	_commands["USER"] = new User(this, false);
+	_commands["USER"] = new User(this, false);	
 	_commands["PRIVMSG"] = new Privmsg(this, true);
 	_commands["MODE"] = new Mode(this, true);
+	_commands["PING"] = new Ping(this, false);
+	_commands["QUIT"] = new Quit(this, false);
+	_commands["WHOIS"] = new Whois(this, true);
+	//for channels
+	_commands["KICK"] = new Kick(this, true);
+	_commands["INVITE"] = new Invite(this, true);
+	// _commands["TOPIC"] = new Topic(this, true);
 	_commands["JOIN"] = new Join(this, true);
 	_commands["PART"] = new Part(this, true);
-	_commands["PING"] = new Ping(this, true);
-	_commands["QUIT"] = new Quit(this, true);
-	_commands["WHOIS"] = new Whois(this, true);
 	_server_fd = create_socket();
 	std::cout << "Starting server on port " << port << std::endl;
 }
 
 Server::~Server() {
 	std::cout << "Server shutting down..." << std::endl;
+	
 	for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
 		delete it->second;
 	// for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
@@ -58,7 +63,7 @@ std::string Server::getPassword() const {
 }
 
 void Server::client_disconnect(int fd) {
-	std::cout << "Client fd " << fd << " disconnected" << std::endl;
+	std::cout << "INFO: Client fd " << fd << " disconnected" << std::endl;
 
 	client_iterator it_c = _clients.find(fd);
 	if (it_c != _clients.end())
@@ -138,12 +143,12 @@ void Server::execute_command(std::vector<std::vector<std::string> > args, Client
 		if (cmd == NULL)
 		{
 			std::cerr << "Command not found" << std::endl;
-			client->send_response(ERR_UNKNOWNCOMMAND, this, client, args[i][0] + " :Unknown command");
+			client->send_response(ERR_UNKNOWNCOMMAND, client, args[i][0] + " :Unknown command");
 			return;
 		}
 		if (cmd->auth_required() && !client->getAuth())
 		{
-			client->send_response(ERR_NOTREGISTERED, this, client, ":You have not registered" + args[i][0]);
+			client->send_response(ERR_NOTREGISTERED, client, ":You have not registered" + args[i][0]);
 			return;
 		}
 		cmd->execute(client, args[i]);
@@ -174,7 +179,7 @@ void Server::client_message(int fd) {
 		return;
 	if (handle_cache(buffer, client, bytes_read) == 1)
 		return;
-	std::cout << "Message received from " << fd << " : " << buffer << std::endl;
+	std::cout << "CLIENT (from " << fd << ") => " << buffer << std::endl;
 	std::vector<std::string> command_args = split(buffer, '\n');
 	std::vector<std::vector<std::string> > args;
 	for (std::size_t i = 0; i < command_args.size(); i++)
@@ -192,11 +197,7 @@ void Server::client_message(int fd) {
 			}
 		}
 	}
-	for (std::size_t i = 0; i < command_args.size(); i++)
-	{
-		std::cout << "Command received from " << fd << " : " << command_args[i] << std::endl;
-		execute_command(args, client);
-	}
+	execute_command(args, client);
 }
 
 std::string	Server::strToLower(const std::string &input)
@@ -329,12 +330,28 @@ int Server::create_socket() {
 	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
 }
 
-std::map<int, Client *> Server::getClients() const {
-	return _clients;
+Client*		Server::get_client_by_nick(std::string client_nickname)
+{
+	for (client_iterator it = _clients.begin(); it != _clients.end(); ++it) 
+	{
+        if (it->second->getNickname() == client_nickname)
+            return it->second;
+    }
+    return NULL;
 }
 
 std::string Server::getServername() const {
 	return _servername;
+}
+
+Channel*	Server::getChannel(std::string channel_name)
+{
+    for (channel_iterator it = _channels.begin(); it != _channels.end(); ++it) 
+	{
+        if ((*it)->getName() == channel_name)
+            return *it;
+    }
+    return NULL;
 }
 
 Command	*Server::getCommand(std::string command) {
@@ -345,12 +362,8 @@ Command	*Server::getCommand(std::string command) {
 	return cmd;
 }
 
-Client *Server::get_client_by_nick(std::string nickname) {
-	client_iterator it;
-	for (it = _clients.begin(); it != _clients.end(); it++)
-	{
-		if (it->second->getNickname() == nickname)
-			return it->second;
-	}
-	return NULL;
+std::map<int, Client *> Server::getClients() const {
+	return _clients;
 }
+
+
