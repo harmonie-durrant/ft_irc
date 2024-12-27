@@ -4,58 +4,58 @@
 
 [![ft_irc CI](https://github.com/harmonie-durrant/ft_irc/actions/workflows/cpp.yml/badge.svg?branch=main)](https://github.com/harmonie-durrant/ft_irc/actions/workflows/cpp.yml)
 
-A 42 project, the goal, to create your own IRC server in C++, fully compatible with an official client.
+Un projet 42, le but, créer votre propre serveur IRC en C++, entierement compatible avec un client officiel.
 
-## How to launch the IRC server ?
+## Comment lancer le serverur IRC ?
 
-1. Clone using git and navigate to the created folder
+1. Clone le projet et naviguer dans le dossier crée
 
 ```bash
-	git clone {url} {folder name}
-	cd {folder name}
+	git clone {url} {nom du dossier}
+	cd {nom du dossier}
 ```
 
-2. Use make to compile the project and then launch the server with the port and password of your choice.
+2. Construire le projet avec make puis lancer le serveur avec le port et mot de passe de ton choix.
 
 ```bash
 	make
 	./ircserv {port} {mot de passe}
 ```
 
-## How to connect with the reference IRC client ?
+## Comment se connecter avec le client IRC de référence ?
 
-1. Install the reference IRC client irssi
+1. Installer le client IRC de référence irssi
 
 ```bash
 	sudo apt-get install irssi
 ```
 
-2. Launch irssi and connect to the server
+2. Lancer irssi et se connecter au serveur
 
 ```bash
 	irssi
 	/connect localhost {port} {mot de passe}
 ```
 
-3. Join a channel
+3. Rejoindre un channel
 
 ```bash
 	/join {channel}
 ```
 
-4. Send a message
+4. Envoyer un message
 
 ```bash
 	/msg {channel} {message}
 ```
 
-5. Leave the channel
+5. Quitter le channel
 
 ```bash
 	/part {channel}
 ```
 
-6. Quit the program
+6. Quitter
 
 ```bash
 	/quit
@@ -65,9 +65,9 @@ ou
 	/exit
 ```
 
-8. For more information on irssi commands, see the [documentation](https://irssi.org/documentation/startup/).
+8. Pour plus d'informations sur les commandes irssi, voir la [documentation](https://irssi.org/documentation/startup/)
 
-## Authors
+## Auteurs
 
 - [renflo974](https://github.com/renflo974)
 - [fguillet42](https://github.com/fguillet42)
