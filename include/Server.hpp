@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: froque <froque@student.42.fr>              +#+  +:+       +#+        */
+/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:05:51 by froque            #+#    #+#             */
-/*   Updated: 2024/12/10 13:05:53 by froque           ###   ########.fr       */
+/*   Updated: 2024/12/15 20:07:04 by fguillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,19 @@ class Command;
 
 class Server {
 
-	typedef std::vector<pollfd>::iterator				pfd_iterator;	// pour les recherches dans le tableau _pfds sand devoir reecrire "std::vector<pollfd>::iterator" a chaque fois
-	// typedef std::vector<Channel *>::iterator			channel_iterator;
-    typedef std::map<int, Client *>::iterator			client_iterator;
-	typedef std::map<std::string, Command *>::iterator	command_iterator;
+	typedef std::vector<pollfd>::iterator       pfd_iterator;	// pour les recherches dans le tableau _pfds sand devoir reecrire "std::vector<pollfd>::iterator" a chaque fois
+	typedef std::vector<Channel *>::iterator    channel_iterator;
+    typedef std::map<int, Client *>::iterator   client_iterator;
 
 	private:
-		int 								_port;
-		const std::string					_password;
-		int									_server_fd;	// fd du socket serveur
-		std::string							_servername;
-		std::map<std::string, Command *>	_commands;	// map des commandes disponibles sur le serveur
-		std::vector<pollfd>					_pfds;	// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
-		// std::vector<Channel *>				_channels;
-		std::map<int, Client *>				_clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
+		int 				_port;
+		const std::string	_password;
+		int					_server_fd;			// fd du socket serveur
+		std::string			_servername;
+
+		std::vector<pollfd>     _pfds;		// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
+		std::vector<Channel *>  _channels;
+		std::map<int, Client *> _clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
 
 		/*
 		struct pollfd {
@@ -71,17 +70,18 @@ class Server {
 		void	client_disconnect(int fd);
 		void	client_message(int fd);
 
-		std::string	strToLower(const std::string &input);
-		bool		nicknameExist(std::string nickname);
+		bool	nicknameExist(std::string nickname);
 		int			handle_cache(std::string &buffer, Client *client, std::size_t bytes_read);
 		void		execute_command(std::vector<std::vector<std::string> > args, Client *client);
 
-		int									getPort() const;
+		int 			getPort() const;
+		std::string		getPassword() const;
+		Client*		 	getClient(std::string client_name) const;
+		std::string		getServername() const;
+		Channel*		getChannel(std::string channel_name);
+		std::string	strToLower(const std::string &input);
 		std::map<std::string, Command *>	getCommands() const;
-		std::string							getPassword() const;
-		Client								*get_client(int fd);
 		std::map<int, Client *>				getClients() const;
-		std::string							getServername() const;
 		Command								*getCommand(std::string command);
 		Client								*get_client_by_nick(std::string nickname);
 
