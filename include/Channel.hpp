@@ -24,21 +24,22 @@
 class Channel
 {
 	private:
-		std::string				_name;
-		std::string				_key;
-		std::string				_topic;
-		std::vector<Client*>	_operators;
-		std::vector<Client*>	_clients;
-        std::vector<Client*>	_guests_list;   //invited users for channel (if invite only mode)
+		std::string				_name;			// name of the channel
+		std::string				_key;			// password for channel (empty = no password)
+		std::string				_topic;			// topic of the channel
+		std::vector<Client*>	_operators;		// list of the channel operators
+		std::vector<Client*>	_clients;		// list of clients in the channel
+        std::vector<Client*>	_guests_list;   // invited users for channel (if invite only mode)
 		
-		size_t					_l;		//max users (0 = unlimited)
-		bool					_i;		//invite only
-		bool					_t;		//TOPIC command only for operators
+		size_t					_l;				//max users (0 = unlimited)
+		bool					_i;				//invite only
+		bool					_t;				//TOPIC command only for operators
 
 	public:
-		Channel(std::string& name, std::string& key, Client* creator);
+		Channel(std::string name, std::string key, Client* creator);
 		~Channel();
 
+		/* SETTERS */
 		void					setName(std::string name);
 		void					setKey(std::string key);
 		void					setTopic(std::string name);
@@ -48,18 +49,20 @@ class Channel
 		std::string				getKey() const;
 		std::string				getTopic() const;
 		
+		/* GETTERS */
         Client*                 getClient(std::string client_nickname);
 		size_t					getLimit() const;
 		bool					getInviteMode() const;
 		bool					getTopicMode() const;
 
+		/* METHODS */
 		void					addClient(Client* client);
 		void					removeClient(Client* client);
+        bool                    isClient(Client* client);
+	
         void                    addOperator(Client* client);
         void                    removeOperator(Client* client);
-
         bool                    isOperator(Client* client);
-        bool                    isClient(Client* client);
 
 		void					broadcast(const std::string& message, Client* exclude);
 

@@ -17,6 +17,7 @@
 #include <string>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <vector>
 #include "numeric_error.hpp"
 #include "numeric_rpl.hpp"
 
@@ -24,17 +25,18 @@ class Server;
 
 class Client {
 	private:
-		std::string	_nickname;
-		std::string	_username;
-		std::string	_fullname;
-		std::string	_servername;
-		std::string	_hostname;
-		bool		_auth;
-		bool		_passok;
-		int			_fd;
-		int			_port;		//apparemment peu utile de recuperer le port, on verra si on garde ou pas
-		std::string	_ip_addr;
-		std::string	_cache;
+		std::string					_nickname;
+		std::string					_username;
+		std::string					_fullname;
+		std::string					_servername;
+		std::string					_hostname;
+		bool						_auth;
+		bool						_passok;
+		int							_fd;
+		int							_port;		//apparemment peu utile de recuperer le port, on verra si on garde ou pas
+		std::string					_ip_addr;
+		std::string					_cache;
+		std::vector<std::string>	_channels;
 
 	public:
 		Client();
@@ -44,26 +46,35 @@ class Client {
 		void send_response(int code, Client *client, std::string msg);
 		void send_message(std::string msg);
 
-		// Getters
-		std::string	getNickname(void) const;
-		std::string	getUsername(void) const;
-		std::string	getFullname(void) const;
-		std::string	getServerName(void) const;
-		std::string	getHostname(void) const;
-		bool		getAuth() const;
-		bool		getPassOK() const;
-		int			getFd() const;
-		std::string	getIpAddr() const;
-		int			getPort() const;
-		std::string	getCache() const;
-		// Setters
+		/* GETTERS */
+		std::string					getNickname(void) const;
+		std::string					getUsername(void) const;
+		std::string					getFullname(void) const;
+		std::string					getServerName(void) const;
+		std::string					getHostname(void) const;
+		bool						getAuth() const;
+		bool						getPassOK() const;
+		int							getFd() const;
+		std::string					getIpAddr() const;
+		int							getPort() const;
+		std::string					getCache() const;
+		std::vector<std::string>	getChannels() const;
+
+		/* SETTERS */
 		void	setNickname(std::string nickname);
 		void	setUsername(std::string username);
 		void	setFullname(std::string fullname);
 		void	setServerName(std::string hostname);
 		void	setHostname(std::string hostname);
-		void	clearCache();	// vider le cache
-		void	appendCache(std::string str); // concatoner des strings dans le cache
+		
+		/* METHODS */
+		void	addChannel(std::string channel);
+		void	removeChannel(std::string channel);
+		void	removeChannels(Server *server);
+	
+		void	clearCache();
+		void	appendCache(std::string str);
+
 		void	setPassOK(bool ok);
 		void	setAuth(bool auth);
 		void	setFd(int fd);

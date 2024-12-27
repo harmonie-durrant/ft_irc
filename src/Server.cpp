@@ -37,8 +37,8 @@ Server::~Server() {
 	
 	for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
 		delete it->second;
-	// for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
-	// 	delete *it;
+	for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
+		delete *it;
 	std::cout << "Disconnecting clients..." << std::endl;
 	client_iterator it = _clients.begin();
 	while (it != _clients.end()) {
@@ -115,7 +115,7 @@ void Server::client_connect(void) {
     std::cout << client->getIpAddr() << ":" << client->getPort() << std::endl;
 }
 
-std::vector<std::string> split(const std::string& str, char delimiter) {
+std::vector<std::string> split(const std::string str, char delimiter) {
 	std::vector<std::string> tokens;
 	std::string token;
 	std::istringstream tokenStream(str);
@@ -330,6 +330,10 @@ int Server::create_socket() {
 	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
 }
 
+void Server::addChannel(Channel *channel) {
+	_channels.push_back(channel);
+}
+
 Client*		Server::get_client_by_nick(std::string client_nickname)
 {
 	for (client_iterator it = _clients.begin(); it != _clients.end(); ++it) 
@@ -364,6 +368,10 @@ Command	*Server::getCommand(std::string command) {
 
 std::map<int, Client *> Server::getClients() const {
 	return _clients;
+}
+
+std::vector<Channel *> Server::getChannels() const {
+	return _channels;
 }
 
 
