@@ -27,6 +27,7 @@ class Client {
 		std::string	_nickname;
 		std::string	_username;
 		std::string	_fullname;
+		std::string	_servername;
 		std::string	_hostname;
 		bool		_auth;
 		bool		_passok;
@@ -40,13 +41,14 @@ class Client {
 		Client(int fd, std::string ip_addr, int port);
 		~Client();
 
-		void send_response(int code, Server *server, Client *client, std::string msg);
+		void send_response(int code, Client *client, std::string msg);
 		void send_message(std::string msg);
 
 		// Getters
 		std::string	getNickname(void) const;
 		std::string	getUsername(void) const;
 		std::string	getFullname(void) const;
+		std::string	getServerName(void) const;
 		std::string	getHostname(void) const;
 		bool		getAuth() const;
 		bool		getPassOK() const;
@@ -58,6 +60,7 @@ class Client {
 		void	setNickname(std::string nickname);
 		void	setUsername(std::string username);
 		void	setFullname(std::string fullname);
+		void	setServerName(std::string hostname);
 		void	setHostname(std::string hostname);
 		void	clearCache();	// vider le cache
 		void	appendCache(std::string str); // concatoner des strings dans le cache

@@ -161,29 +161,11 @@ public:
     void	execute(Client* client, std::vector<std::string> args);
 };
 
-class Mode : public Command 
-{
-public:
-    Mode(class Server* server, bool auth);
-	~Mode();
-
-    void	execute(Client* client, std::vector<std::string> args);
-};
-
 class Join : public Command 
 {
 public:
     Join(class Server* server, bool auth);
 	~Join();
-
-    void	execute(Client* client, std::vector<std::string> args);
-};
-
-class Part : public Command 
-{
-public:
-    Part(class Server* server, bool auth);
-	~Part();
 
     void	execute(Client* client, std::vector<std::string> args);
 };

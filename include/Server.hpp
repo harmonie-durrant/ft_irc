@@ -30,18 +30,25 @@
 #include <memory>				// pour std::unique_ptr
 #include "numeric_error.hpp"
 #include "numeric_rpl.hpp"
+#include "Channel.hpp"
 #include "Command.hpp"
 #include "Client.hpp"
 
 #define MAX_CLIENTS 1000		// valeur au hasard, a redefinir, mais il faut une valeur max pour listen()
 
+// declarations to avoid not defined errors
 class Command;
+
+class Channel;
+
+class Client;
 
 class Server {
 
 	typedef std::vector<pollfd>::iterator       pfd_iterator;	// pour les recherches dans le tableau _pfds sand devoir reecrire "std::vector<pollfd>::iterator" a chaque fois
 	typedef std::vector<Channel *>::iterator    channel_iterator;
     typedef std::map<int, Client *>::iterator   client_iterator;
+	typedef std::map<std::string, Command *>::iterator command_iterator;
 
 	private:
 		int 				_port;
@@ -52,6 +59,7 @@ class Server {
 		std::vector<pollfd>     _pfds;		// tableau de structures pollfd (1 pollfd pour le serveur et chaque clients)
 		std::vector<Channel *>  _channels;
 		std::map<int, Client *> _clients;	//cle: int = le file descriptor du client, valeur: objet client (qui aura aussi son fd enregistre mais en private)
+		std::map<std::string, Command *> _commands;
 
 		/*
 		struct pollfd {
@@ -76,9 +84,9 @@ class Server {
 
 		int 			getPort() const;
 		std::string		getPassword() const;
-		Client*		 	getClient(std::string client_name) const;
 		std::string		getServername() const;
 		Channel*		getChannel(std::string channel_name);
+		Client			*get_client(int fd);
 		std::string	strToLower(const std::string &input);
 		std::map<std::string, Command *>	getCommands() const;
 		std::map<int, Client *>				getClients() const;

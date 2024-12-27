@@ -7,20 +7,20 @@ Cap::~Cap() {}
 void Cap::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 2)
 	{
-		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
+		client->send_response(ERR_NEEDMOREPARAMS, client, args[0] + " :Not enough parameters");
 		return;
 	}
 	if (args[1] == "LS")
 	{
-		client->send_response(-1, _server, client, "CAP * LS :");
+		client->send_response(-1, client, "CAP * LS :");
 		return;
 	}
 	if (args[1] == "REQ")
 	{
-		client->send_response(-1, _server, client, "CAP * ACK :");
+		client->send_response(-1, client, "CAP * ACK :");
 		return;
 	}
 	if (args[1] == "END")
 		return;
-	client->send_response(ERR_INVALIDCAPCMD, _server, client, args[1] + " :Invalid CAP subcommand");
+	client->send_response(ERR_INVALIDCAPCMD, client, args[1] + " :Invalid CAP subcommand");
 }

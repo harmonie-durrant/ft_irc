@@ -9,14 +9,14 @@ Nick::~Nick() {}
 void Nick::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 2)
 	{
-		client->send_response(ERR_NEEDMOREPARAMS, _server, client, args[0] + " :Not enough parameters");
+		client->send_response(ERR_NEEDMOREPARAMS, client, args[0] + " :Not enough parameters");
 		return;
 	}
 	std::string oldnick = client->getNickname();
 	std::string nickname = args[1];
 	if (oldnick == nickname)
 	{
-		client->send_response(-1, _server, client, ":" + oldnick + " NICK " + oldnick);
+		client->send_response(-1, client, ":" + oldnick + " NICK " + oldnick);
 		return;
 	}
 	if (_server->nicknameExist(nickname))
@@ -24,15 +24,9 @@ void Nick::execute(Client* client, std::vector<std::string> args) {
 		nickname = args[1];
 		if (args[1][0] == ' ')
 			nickname = nickname.substr(1);
-		client->send_response(ERR_NICKNAMEINUSE, _server, client, nickname + " " + nickname);
+		client->send_response(ERR_NICKNAMEINUSE, client, nickname + " " + nickname);
 		return;
 	}
 	client->setNickname(nickname);
-	client->send_response(-1, _server, client, ":" + oldnick + " NICK " + client->getNickname());
-	if (client->getNickname() != "" && client->getUsername() != "" && client->getHostname() != "" && client->getFullname() != "" && client->getPassOK() == true)
-	{
-		if (!client->getAuth())
-			client->send_response(RPL_WELCOME, _server, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
-		client->setAuth(true);
-	}
+	client->send_response(-1, client, ":" + oldnick + " NICK " + client->getNickname());
 }

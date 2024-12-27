@@ -13,35 +13,32 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
-Client::Client() : _auth(false), _fd(0), _port(0), _ip_addr("") {
-}
+Client::Client() : _nickname(""), _username(""), _fullname(""), _servername(""), _hostname(""), _auth(false), _passok(false), _fd(0), _port(0), _ip_addr(""), _cache("") {
+} //! maybe disable this constructor with no parameters in the future
 
-Client::Client(int fd, std::string ip_addr, int port) : _auth(false), _passok(false), _fd(fd), _port(port), _ip_addr(ip_addr) {
+Client::Client(int fd, std::string ip_addr, int port) : _nickname(""), _username(""), _fullname(""), _hostname(""), _auth(false), _passok(false), _fd(fd), _port(port), _ip_addr(ip_addr), _cache("") {
 }
 
 Client::~Client() {
 }
 
-void Client::send_response(int code, Server *server, Client *client, std::string msg) {
+void Client::send_response(int code, Client *client, std::string msg) {
 	std::string response;
 	if (code == -1)
 	{
 		response = msg + "\r\n";
-		std::cout << _fd << "==> " << response << std::endl;
+		std::cout << "CLIENT (to " << _fd << ") => " << response << std::endl;
 		send(_fd, response.c_str(), response.length(), 0);
 		return;
 	}
-	std::string servername = server->getServername();
+	std::string servername = client->getServerName();
 	std::string nick = client->getNickname();
 	std::stringstream ss;
 	ss << code;
 	std::string s_code = ss.str();
 	if (code > 999)
 	{
-		std::cerr << "Error: code must be between -1 and 999" << std::endl;
-		response = ":" + servername + " 400 " + nick + ": Unknown Error\r\n";
-		std::cout << "==> " << response << std::endl;
-		send(_fd, response.c_str(), response.length(), 0);
+		std::cerr << "ERR: Error while sending response: code must be between -1 and 999" << std::endl;
 		return;
 	}
 	if (code < 10)
@@ -51,7 +48,7 @@ void Client::send_response(int code, Server *server, Client *client, std::string
 	response = ":" + servername + " " + s_code + " " + nick + " " + msg + "\r\n";
 	if (nick.empty())
 		response = ":" + servername + " " + s_code + " " + msg + "\r\n";
-	std::cout << _fd << "==> " << response << std::endl;
+	std::cout << "CLIENT (to " << _fd << ") => " << response << std::endl;
 	send(_fd, response.c_str(), response.length(), 0);
 }
 
@@ -85,6 +82,10 @@ std::string Client::getUsername() const {
 
 std::string Client::getFullname() const {
 	return _fullname;
+}
+
+std::string Client::getServerName() const {
+	return _servername;
 }
 
 std::string Client::getHostname() const {
@@ -129,6 +130,10 @@ void Client::setUsername(std::string username) {
 
 void Client::setFullname(std::string fullname) {
 	_fullname = fullname;
+}
+
+void Client::setServerName(std::string servername) {
+	_servername = servername;
 }
 
 void Client::setHostname(std::string hostname) {

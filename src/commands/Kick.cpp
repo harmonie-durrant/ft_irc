@@ -20,7 +20,7 @@ void Kick::execute(Client* client, std::vector<std::string> args)
 {
     if (args.size() < 3) 
     {
-        client->send_response(461, _server, client, args[0] + " :Not enough parameters");
+        client->send_response(461, client, args[0] + " :Not enough parameters");
         return;
     }
     std::string channelName = args[1];
@@ -30,20 +30,20 @@ void Kick::execute(Client* client, std::vector<std::string> args)
     Channel* channel = _server->getChannel(channelName);
     if (!channel) 
     {
-        client->send_response(403, _server, client, channelName + " :No such channel");
+        client->send_response(403, client, channelName + " :No such channel");
         return;
     }
     //Verifier que l'utilisateur est operateur
     if (!channel->isOperator(client))
     {
-        client->send_response(482, _server, client, channelName + " :You're not channel operator");
+        client->send_response(482, client, channelName + " :You're not channel operator");
         return;
     }
     //Verifier si le client a expulser est dans le channel
     Client* target = channel->getClient(targetNick);
     if (!target) 
     {
-        client->send_response(441, _server, client, targetNick + " " + channelName + " :They aren't on that channel");
+        client->send_response(441, client, targetNick + " " + channelName + " :They aren't on that channel");
         return;
     }
     //Expulser l'individu susdite
