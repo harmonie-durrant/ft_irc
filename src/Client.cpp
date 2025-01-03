@@ -135,6 +135,16 @@ void Client::removeChannels(Server *server) {
 	}
 }
 
+bool Client::inChannel(std::string channel) {
+	std::vector<std::string>::iterator it = _channels.begin();
+	while (it != _channels.end()) {
+		if (*it == channel)
+			return true;
+		++it;
+	}
+	return false;
+}
+
 // cache
 
 void Client::clearCache() {

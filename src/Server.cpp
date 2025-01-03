@@ -13,6 +13,8 @@
 #include "Server.hpp"
 
 Server::Server(int port, std::string password, std::string servername): _port(port), _password(password), _servername(servername) {
+	_max_global_channels = 10;
+	_max_user_channels = 3;
 	_commands["CAP"] = new Cap(this, false);
 	_commands["PASS"] = new Pass(this, false);
 	_commands["NICK"] = new Nick(this, false);
@@ -25,7 +27,7 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 	//for channels
 	_commands["KICK"] = new Kick(this, true);
 	_commands["INVITE"] = new Invite(this, true);
-	// _commands["TOPIC"] = new Topic(this, true);
+	_commands["TOPIC"] = new Topic(this, true);
 	_commands["JOIN"] = new Join(this, true);
 	_commands["PART"] = new Part(this, true);
 	_server_fd = create_socket();
@@ -356,6 +358,14 @@ Channel*	Server::getChannel(std::string channel_name)
             return *it;
     }
     return NULL;
+}
+
+int Server::getMaxGlobalChannels() const {
+	return _max_global_channels;
+}
+
+int Server::getMaxUserChannels() const {
+	return _max_user_channels;
 }
 
 Command	*Server::getCommand(std::string command) {

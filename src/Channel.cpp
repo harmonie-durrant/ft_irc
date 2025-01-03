@@ -8,14 +8,31 @@ Channel::Channel(std::string name, std::string key, Client* creator): _name(name
 
 Channel::~Channel()	{}
 
+/* SETTERS */
 void	Channel::setName(std::string name)	{ _name = name; }
 void	Channel::setKey(std::string key)	{ _key = key; }
 void	Channel::setTopic(std::string topic){ _topic = topic; }
 void	Channel::setLimit(size_t limit)		{ _l = limit; }
 
-std::string	Channel::getName() const	{ return _name; }
-std::string	Channel::getKey() const		{ return _key; }
-std::string	Channel::getTopic() const	{ return _topic; }
+/* BASIC GETTERS */
+std::string				Channel::getName() const		{ return _name; }
+std::string				Channel::getKey() const			{ return _key; }
+std::string				Channel::getTopic() const		{ return _topic; }
+std::vector<Client*>	Channel::getClients() const		{ return _clients; }
+size_t					Channel::getLimit() const		{ return _l; }
+bool					Channel::getInviteMode() const	{ return _i; }
+bool					Channel::getTopicMode() const	{ return _t; }
+
+/* ADVANCED GETTERS */
+std::string	Channel::getNamesList() const
+{
+	std::string clients;
+	for (std::vector<Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it) 
+	{
+		clients += (*it)->getNickname() + " ";
+	}
+	return clients;
+}
 
 Client*	Channel::getClient(std::string client_nickname)
 {
@@ -26,11 +43,9 @@ Client*	Channel::getClient(std::string client_nickname)
 	}
 	return NULL;
 }
-size_t	Channel::getLimit() const			{ return _l; }
-bool	Channel::getInviteMode() const		{ return _i; }
-bool	Channel::getTopicMode() const		{ return _t; }
 
-void	Channel::addClient(Client* client)
+/* METHODS */
+void					Channel::addClient(Client* client)
 {
     if (std::find(_clients.begin(), _clients.end(), client) == _clients.end())
 	{
@@ -74,6 +89,20 @@ bool Channel::isOperator(Client* client)
 bool Channel::isClient(Client* client)
 {
     return std::find(_clients.begin(), _clients.end(), client) != _clients.end();
+}
+
+bool Channel::isInvited(Client* client)
+{
+	return std::find(_guests_list.begin(), _guests_list.end(), client) != _guests_list.end();
+}
+
+void Channel::sendJoinSelf(Client* client)
+{
+	client->addChannel(this->getName());
+	client->send_response(RPL_TOPIC, client, getName() + " :" + getTopic());
+	// client->send_response(RPL_TOPICTIME, client, getName() + " :" + get_topic_time());
+	client->send_response(RPL_NAMREPLY, client, getName() + " :" + getNamesList());
+	client->send_response(RPL_ENDOFNAMES, client, getName() + " :End of /NAMES list");
 }
 
 void	Channel::broadcast(const std::string& message, Client* exclude)

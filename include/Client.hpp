@@ -71,6 +71,8 @@ class Client {
 		void	addChannel(std::string channel);
 		void	removeChannel(std::string channel);
 		void	removeChannels(Server *server);
+
+		bool	inChannel(std::string channel);
 	
 		void	clearCache();
 		void	appendCache(std::string str);

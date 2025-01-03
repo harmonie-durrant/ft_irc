@@ -58,6 +58,8 @@ class Server {
 		std::vector<Channel *>				_channels;
 		std::map<int, Client *>				_clients;
 		std::map<std::string, Command *>	_commands;
+		int 								_max_global_channels;
+		int 								_max_user_channels;
 
 	public:
 		/* CONSTRUCT DECONSTRUCT */
@@ -82,9 +84,10 @@ class Server {
 		int 								getPort() const;
 		std::string							getPassword() const;
 		std::string							getServername() const;
+		int									getMaxGlobalChannels() const;
+		int									getMaxUserChannels() const;
 		Channel*							getChannel(std::string channel_name);
 		Client*								get_client(int fd);
-		std::map<std::string, Command *>	getCommands() const; //! not defined
 		std::map<int, Client *>				getClients() const;
 		std::vector<Channel *>				getChannels() const;
 		Command*							getCommand(std::string command);
