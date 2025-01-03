@@ -11,11 +11,7 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 		return;
 	}
 	if (args[1] == "0") {
-		// for (channel_itterator it = client->get_channels().begin(); it != client->get_channels().end(); it++) {
-		// 	Channel *channel = _server->get_channel(*it);
-		// 	channel->remove_user(client); // sends PART to all users in channel
-		// 	client->remove_channel(channel); // sends PART to client
-		// }
+		client->send_response(ERR_NOSUCHCHANNEL, client, args[1] + " :Invalid channel name");
 		return;
 	}
 	if (args[1][0] != '#') {
@@ -30,15 +26,22 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 		client->send_response(ERR_NOSUCHCHANNEL, client, args[1] + " :Channel name contains invalid characters");
 		return;
 	}
-	// if (client->get_channels().size() >= _server->get_max_channels()) {
-	// 	client->send_response(ERR_TOOMANYCHANNELS, client, args[1] + " :You are already in too many channels");
-	// 	return;
-	// }
+	if (client->getChannels().size() >= (std::size_t)_server->getMaxUserChannels()) {
+		client->send_response(ERR_TOOMANYCHANNELS, client, args[1] + " :You are already in too many channels");
+		return;
+	}
 	// create channel if doesn't exist and add user to it
 	Channel *channel = _server->getChannel(args[1]);
 	if (channel == NULL) {
+		if (_server->getChannels().size() >= (std::size_t)_server->getMaxGlobalChannels()) {
+			client->send_response(ERR_TOOMANYCHANNELS, client, args[1] + " :Too many channels");
+			return;
+		}
 		channel = new Channel(args[1], "", client);
 		_server->addChannel(channel);
+		channel->addClient(client);
+		channel->addOperator(client);
+		channel->sendJoinSelf(client);
 		return;
 	}
 	// check if user is already in channel
@@ -47,31 +50,31 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 		return;
 	}
 	// check if channel is full
-	// if (channel->is_full()) {
-	// 	client->send_response(ERR_CHANNELISFULL, client, args[1] + " :Channel is full");
-	// 	return;
-	// }
+	if (channel->getLimit() == channel->getClients().size()) {
+		client->send_response(ERR_CHANNELISFULL, client, args[1] + " :Channel is full");
+		return;
+	}
 	// check if channel is invite only and user is invited
-	// if (channel->is_invite_only() && !channel->is_user_invited(client)) {
-	// 	client->send_response(ERR_INVITEONLYCHAN, client, args[1] + " :Channel is invite only");
-	// 	return;
-	// }
+	if (channel->getInviteMode() && !channel->isInvited(client)) {
+		client->send_response(ERR_INVITEONLYCHAN, client, args[1] + " :Channel is invite only");
+		return;
+	}
 	// check if user is banned from channel
 	// if (channel->is_banned(client)) {
 	// 	client->send_response(ERR_BANNEDFROMCHAN, client, args[1] + " :You are banned from this channel");
 	// 	return;
 	// }
 	// check if channel has a key and if user provided one
-	// if (channel->has_key() && args.size() < 3) {
-	// 	client->send_response(ERR_BADCHANNELKEY, client, args[1] + " :Channel key required");
-	// 	return;
-	// }
+	if (channel->getKey() != "" && args.size() < 3) {
+		client->send_response(ERR_BADCHANNELKEY, client, args[1] + " :Cannot join channel (+k) - bad key");
+		return;
+	}
 	// check if user provided correct key
-	// if (channel->has_key() && args[2] != channel->get_key()) {
-	// 	client->send_response(ERR_BADCHANNELKEY, client, args[1] + " :Invalid channel key");
-	// 	return;
-	// }
+	if (args.size() == 3 && args[2] != channel->getKey()) {
+		client->send_response(ERR_BADCHANNELKEY, client, args[1] + " :Cannot join channel (+k) - bad key");
+		return;
+	}
 	channel->addClient(client);
+	channel->sendJoinSelf(client);
 	client->addChannel(channel->getName());
-	// send client the channel info... MODE, RPL_TOPIC, RPL_TOPICTIME, one or more RPL_NAMREPLY, RPL_ENDOFNAMES ...
 }

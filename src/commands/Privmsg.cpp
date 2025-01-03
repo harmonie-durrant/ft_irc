@@ -1,4 +1,5 @@
 #include "Command.hpp"
+#include "Server.hpp"
 #include "numeric_error.hpp"
 #include "numeric_rpl.hpp"
 
@@ -39,19 +40,10 @@ void Privmsg::execute(Client* client, std::vector<std::string> args)
 		client->send_response(ERR_NOSUCHNICK, client, args[1] + " :No such nick");
 		return;
 	}
-	// Channel *channel = client->getChannel(args[1]);
-	// if (channel == NULL)
-	// {
-	// 	client->send_response(ERR_NOSUCHCHANNEL, client, args[1] + " :No such channel");
-	// 	return;
-	// }
-	// if (!channel->isOnChannel(client))
-	// {
-	// 	client->send_response(ERR_CANNOTSENDTOCHAN, client, args[1] + " :Cannot send to channel");
-	// 	return;
-	// }
-	// channel->send_message(client, message);
-
-	// TEMP, sends message back to sender as if they were the target
-	client->send_response(-1, client, ":" + client->getNickname() + " PRIVMSG " + args[1] + " :" + message);
+	Channel *channel = _server->getChannel(args[1]);
+	if (channel == NULL)
+		return client->send_response(ERR_NOSUCHCHANNEL, client, args[1] + " :No such channel");
+	if (client->inChannel(args[1]) == false)
+		return client->send_response(ERR_CANNOTSENDTOCHAN, client, args[1] + " :Cannot send to channel");
+	channel->broadcast(":" + client->getNickname() + " PRIVMSG " + channel->getName() + " :" + message, client);
 }

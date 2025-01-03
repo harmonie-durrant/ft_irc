@@ -45,25 +45,30 @@ class Channel
 		void					setTopic(std::string name);
 		void					setLimit(size_t limit);
 
+		/* BASIC GETTERS */
 		std::string				getName() const;
 		std::string				getKey() const;
 		std::string				getTopic() const;
-		
-		/* GETTERS */
-        Client*                 getClient(std::string client_nickname);
+		std::vector<Client*>	getClients() const;
 		size_t					getLimit() const;
 		bool					getInviteMode() const;
 		bool					getTopicMode() const;
+
+		/* ADVANCED GETTERS */
+        Client*                 getClient(std::string client_nickname);
+		std::string				getNamesList() const;
 
 		/* METHODS */
 		void					addClient(Client* client);
 		void					removeClient(Client* client);
         bool                    isClient(Client* client);
+		bool					isInvited(Client* client);
 	
         void                    addOperator(Client* client);
         void                    removeOperator(Client* client);
         bool                    isOperator(Client* client);
 
+		void					sendJoinSelf(Client* client);
 		void					broadcast(const std::string& message, Client* exclude);
 
 		void					kick(Client* client, Client* target, const std::string reason);
