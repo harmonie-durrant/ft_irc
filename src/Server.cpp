@@ -360,6 +360,21 @@ Channel*	Server::getChannel(std::string channel_name)
     return NULL;
 }
 
+void Server::removeChannel(Channel *channel)
+{
+	channel_iterator it = _channels.begin();
+	while (it != _channels.end())
+	{
+		if (*it == channel)
+		{
+			delete *it;
+			_channels.erase(it);
+			return;
+		}
+		++it;
+	}
+}
+
 int Server::getMaxGlobalChannels() const {
 	return _max_global_channels;
 }

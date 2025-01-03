@@ -77,6 +77,7 @@ class Server {
 		void		execute_command(std::vector<std::vector<std::string> > args, Client *client);
 		void		addChannel(Channel *channel);
 		std::string	strToLower(const std::string &input);
+		void		removeChannel(Channel *channel);
 		//void addClient(Client client);
 		//void removeClient(Client client);
 
