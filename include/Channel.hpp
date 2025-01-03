@@ -30,13 +30,14 @@ class Channel
 		std::vector<Client*>	_operators;		// list of the channel operators
 		std::vector<Client*>	_clients;		// list of clients in the channel
         std::vector<Client*>	_guests_list;   // invited users for channel (if invite only mode)
+		Server*					_server;		// server where the channel is
 		
 		size_t					_l;				//max users (0 = unlimited)
 		bool					_i;				//invite only
 		bool					_t;				//TOPIC command only for operators
 
 	public:
-		Channel(std::string name, std::string key, Client* creator);
+		Channel(std::string name, std::string key, Client* creator, Server* server);
 		~Channel();
 
 		/* SETTERS */
@@ -63,6 +64,8 @@ class Channel
 		void					removeClient(Client* client);
         bool                    isClient(Client* client);
 		bool					isInvited(Client* client);
+		void					invite(Client* client);
+		void					uninvite(Client* client);
 	
         void                    addOperator(Client* client);
         void                    removeOperator(Client* client);

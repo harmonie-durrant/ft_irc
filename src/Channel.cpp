@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(std::string name, std::string key, Client* creator): _name(name), _key(key), _topic(""), _l(0), _i(false), _t(false)
+Channel::Channel(std::string name, std::string key, Client* creator, Server *server): _name(name), _key(key), _topic(""), _server(server), _l(0), _i(false), _t(false)
 {
 	_operators.push_back(creator);
 	_clients.push_back(creator);
@@ -52,8 +52,7 @@ void					Channel::addClient(Client* client)
         _clients.push_back(client);
 	}
 	// send to all except the new client
-	std::string message = ":" + client->getNickname() + " JOIN " + _name;
-	broadcast(message, client);
+	broadcast(":" + client->getNickname() + " JOIN " + _name, client);
 }
 
 void	Channel::removeClient(Client* client)
@@ -63,9 +62,10 @@ void	Channel::removeClient(Client* client)
 	{
         _clients.erase(it);
 	}
+	if (_clients.size() == 0)
+		return _server->removeChannel(this);
 	// send to all except the leaving client
-	std::string message = ":" + client->getNickname() + " PART " + _name;
-	broadcast(message, client);
+	broadcast(":" + client->getNickname() + " PART " + _name, client);
 }
 
 void    Channel::addOperator(Client* client)
@@ -94,6 +94,18 @@ bool Channel::isClient(Client* client)
 bool Channel::isInvited(Client* client)
 {
 	return std::find(_guests_list.begin(), _guests_list.end(), client) != _guests_list.end();
+}
+
+void Channel::invite(Client *client)
+{
+	_guests_list.push_back(client);
+}
+
+void Channel::uninvite(Client *client)
+{
+	std::vector<Client*>::iterator it = std::find(_guests_list.begin(), _guests_list.end(), client);
+	if (it != _guests_list.end())
+		_guests_list.erase(it);
 }
 
 void Channel::sendJoinSelf(Client* client)
