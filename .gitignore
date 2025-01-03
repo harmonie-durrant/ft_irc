@@ -20,3 +20,9 @@ create_command
 .dockerignore
 Dockerfile
 docker-compose.yml
+
+# WSL
+*:Zone.Identifier
+*.Identifier
+*:zone.identifier
+*.identifier
