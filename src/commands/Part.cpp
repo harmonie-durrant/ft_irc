@@ -41,9 +41,9 @@ void Part::execute(Client* client, std::vector<std::string> args) {
 			client->send_response(ERR_NOTONCHANNEL, client, target_channels[i] + " :You're not on that channel");
 			return;
 		}
-		// remove user from channel sending PART to all users in channel
-		channel->removeClient(client);
 		// remove channel from user
 		client->removeChannel(channel->getName());
+		// remove user from channel sending PART to all users in channel
+		channel->removeClient(client);
 	}
 }
