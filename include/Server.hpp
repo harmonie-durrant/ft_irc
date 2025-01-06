@@ -6,7 +6,7 @@
 /*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:05:51 by froque            #+#    #+#             */
-/*   Updated: 2024/12/15 20:07:04 by fguillet         ###   ########.fr       */
+/*   Updated: 2025/01/06 14:24:39 by fguillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ class Server {
 		int									getMaxUserChannels() const;
 		Channel*							getChannel(std::string channel_name);
 		Client*								get_client(int fd);
-		std::map<int, Client *>				getClients() const;
-		std::vector<Channel *>				getChannels() const;
+		const std::map<int, Client *>&			getClients() const;
+		const std::vector<Channel *>&			getChannels() const;
 		Command*							getCommand(std::string command);
 		Client*								get_client_by_nick(std::string nickname);
 

@@ -19,7 +19,7 @@ void Whois::execute(Client* client, std::vector<std::string> args) {
 		return;
 	}
 	// for every argument, check if it is a user or channel and print info accordingly
-	for (std::map<int, Client*>::iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
+	for (std::map<int, Client*>::const_iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
 	{
 		//! if user is hidden from WHOIS, break
 		if (it->second->getNickname() == args[1])
