@@ -27,7 +27,7 @@ bool					Channel::getTopicMode() const	{ return _t; }
 std::string	Channel::getNamesList() const
 {
 	std::string clients;
-	for (std::vector<Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it) 
+	for (std::vector<Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		clients += (*it)->getNickname() + " ";
 	}
@@ -36,7 +36,7 @@ std::string	Channel::getNamesList() const
 
 Client*	Channel::getClient(std::string client_nickname)
 {
-	for (std::vector<Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) 
+	for (std::vector<Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if ((*it)->getNickname() == client_nickname)
 			return *it;
@@ -132,7 +132,7 @@ void	Channel::broadcast(const std::string& message, Client* exclude)
     }
 }
 
-void Channel::kick(Client* kicker, Client* target, const std::string reason = "") 
+void Channel::kick(Client* kicker, Client* target, const std::string reason = "")
 {
     removeClient(target);
     removeOperator(target);
