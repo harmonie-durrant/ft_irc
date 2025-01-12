@@ -22,7 +22,16 @@ void User::execute(Client* client, std::vector<std::string> args) {
 	client->setHostname(args[2]);
 	client->setServerName(args[3]);
 	client->setFullname(args[4]);
-	if (client->getNickname() != "" && client->getUsername() != "" && client->getHostname() != "" && client->getFullname() != "" && client->getPassOK() == true)
+	if (client->getPassOK() == false)
+	{
+		client->send_response(ERR_PASSWDMISMATCH, client, ":Password incorrect");
+		client->send_response(-1, client, "ERROR :Closing Link: localhost (Bad Password)");
+		_server->client_disconnect(client->getFd());
+		client->setAuth(false);
+		return;
+
+	}
+	if (client->getNickname() != "" && client->getUsername() != "" && client->getHostname() != "" && client->getFullname() != "")
 	{
 		if (!client->getAuth())
 			client->send_response(RPL_WELCOME, client, ":Welcome to the Internet Relay Network " + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname());
