@@ -33,13 +33,21 @@ void Who::execute(Client* client, std::vector<std::string> args) {
 	const std::vector<Client*>& clients = channel->getClients();
 	for (std::vector<Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it) {
 		Client* member = *it;
-		client->send_response(RPL_WHOREPLY, client,
+		std::string response;
+		response = channel->getName() + " " + member->getUsername() + " " +
+		member->getHostname() + " " + member->getServerName() + " " +
+		member->getNickname() + " H";
+		if (channel->isOperator(member))
+			response += "@";
+		response += " :0 " + member->getFullname();
+		/*client->send_response(RPL_WHOREPLY, client,
 		channel->getName() + " " + member->getUsername() + " " +
 		member->getHostname() + " " + member->getServerName() + " " +
 		member->getNickname() + " H :0 " + member->getFullname());
+		*/
+		client->send_response(RPL_WHOREPLY, client, response);
 	}
 	client->send_response(RPL_ENDOFWHO, client, channel_name + " :End of WHO list");
 }
 
 // :<server> 352 <client_nick> <channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>
-// gerer @
