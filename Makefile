@@ -29,6 +29,7 @@ SRC =	src/main.cpp				\
 		src/commands/User.cpp		\
 		src/commands/Whois.cpp		\
 		src/commands/Join.cpp		\
+		src/commands/Who.cpp		\
 
 OBJ = $(SRC:.cpp=.o)
 
