@@ -40,11 +40,6 @@ void Who::execute(Client* client, std::vector<std::string> args) {
 		if (channel->isOperator(member))
 			response += "@";
 		response += " :0 " + member->getFullname();
-		/*client->send_response(RPL_WHOREPLY, client,
-		channel->getName() + " " + member->getUsername() + " " +
-		member->getHostname() + " " + member->getServerName() + " " +
-		member->getNickname() + " H :0 " + member->getFullname());
-		*/
 		client->send_response(RPL_WHOREPLY, client, response);
 	}
 	client->send_response(RPL_ENDOFWHO, client, channel_name + " :End of WHO list");
