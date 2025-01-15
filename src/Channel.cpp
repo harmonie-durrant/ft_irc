@@ -16,12 +16,14 @@ void	Channel::setLimit(size_t limit)		{ _l = limit; }
 
 /* BASIC GETTERS */
 std::string				Channel::getName() const		{ return _name; }
-std::string				Channel::getKey() const			{ return _key; }
+//std::string				Channel::getKey() const			{ return _key; }
+std::string				Channel::getKey() const			{ return "mdp"; }
 std::string				Channel::getTopic() const		{ return _topic; }
 std::vector<Client*>	Channel::getClients() const		{ return _clients; }
 size_t					Channel::getLimit() const		{ return _l; }
 bool					Channel::getInviteMode() const	{ return _i; }
-bool					Channel::getTopicMode() const	{ return _t; }
+//bool					Channel::getTopicMode() const	{ return _t; }
+bool					Channel::getTopicMode() const	{ return true; }
 
 /* ADVANCED GETTERS */
 std::string	Channel::getNamesList() const
