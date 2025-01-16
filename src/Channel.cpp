@@ -22,6 +22,7 @@ std::vector<Client*>	Channel::getClients() const		{ return _clients; }
 size_t					Channel::getLimit() const		{ return _l; }
 bool					Channel::getInviteMode() const	{ return _i; }
 bool					Channel::getTopicMode() const	{ return _t; }
+std::vector<Client*>	Channel::getOperators() const	{ return _operators; }
 
 /* ADVANCED GETTERS */
 std::string	Channel::getNamesList() const
@@ -58,13 +59,13 @@ void					Channel::addClient(Client* client)
 void	Channel::removeClient(Client* client)
 {
     std::vector<Client*>::iterator it = std::find(_clients.begin(), _clients.end(), client);
-    if (it != _clients.end())
-	{
+    if (it != _clients.end()) {
         _clients.erase(it);
 	}
 	if (_clients.size() == 0)
 		return _server->removeChannel(this);
-	// send to all except the leaving client
+	if (isOperator(client))
+		removeOperator(client);
 	broadcast(":" + client->getNickname() + " PART " + _name, client);
 }
 

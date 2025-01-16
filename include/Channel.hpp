@@ -54,6 +54,7 @@ class Channel
 		size_t					getLimit() const;
 		bool					getInviteMode() const;
 		bool					getTopicMode() const;
+		std::vector<Client*>	getOperators() const;
 
 		/* ADVANCED GETTERS */
         Client*                 getClient(std::string client_nickname);
