@@ -227,18 +227,6 @@ bool	Server::nicknameExist(std::string nickname)
 	return false;
 }
 
-/*
-bool	Server::nicknameExist(std::string nickname)
-{
-	client_iterator it;
-	for (it = _clients.begin(); it != _clients.end(); it++)
-	{
-		if (it->second->getNickname() == nickname)
-			return true;
-	}
-	return false;
-}
-*/
 void Server::start_server(void)
 {
 	pollfd server_poll_fd = {_server_fd, POLLIN, 0};
@@ -274,21 +262,6 @@ void Server::start_server(void)
         }
 	}
 }
-/*
-void Server::addClient(Client client) {
-	_clients.push_back(client);
-}
-
-void Server::removeClient(Client client) {
-	std::vector<Client>::iterator it = _clients.begin();
-	while (it != _clients.end()) {
-		if (it->getFd() == client.getFd()) {
-			_clients.erase(it);
-			break;
-		}
-		it++;
-	}
-}*/
 
 int Server::create_socket() {
 
@@ -328,9 +301,6 @@ int Server::create_socket() {
     }
 
 	return server_fd;
-
-	//std::runtime_error pour pouvoir catch les throw dans les blocs catch(const std::exception& e) sans avoir
-	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
 }
 
 void Server::addChannel(Channel *channel) {
