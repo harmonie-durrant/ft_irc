@@ -6,6 +6,11 @@ Mode::Mode(Server* server, bool auth) : Command(server, auth) {}
 
 Mode::~Mode() {}
 
+void	Mode::modeChannel(class Client* client, class Channel* channel, std::vector<std::string> args)
+{
+
+}
+
 void Mode::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 2)
 	{
@@ -42,12 +47,16 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 			return client->send_response(ERR_NOSUCHCHANNEL, client, channel_name + " :No such channel");
 		if (channel->isOperator(client) == false)
 			return client->send_response(ERR_CHANOPRIVSNEEDED, client, channel_name + " :You're not channel operator");
+		char sign = args[2][0];
+		if (!(sign == '+' || sign == '-'))
+			return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
+		//modeChannel(client, channel, args);
 	}
 	client->send_response(-1, client, ":" + servername + " MODE " + nick + " " + args[1]);
-
 }
 
 
 // avoir si on doit gerer
 // :irc.example.com 329 YourNick #example 1693587253
 // 329 : Timestamp de création du canal (1693587253 est un horodatage UNIX).
+// a gerer /mode YourNick +i ?  car irssi envoie ca a la connection

@@ -84,6 +84,7 @@ public:
 	~Mode();
 
 	void	execute(class Client* client, std::vector<std::string> args);
+	void	modeChannel(class Client* client, class Channel* channel, std::vector<std::string> args);
 };
 class Part : public Command
 {
@@ -130,7 +131,7 @@ public:
 	void    execute(class Client* client, std::vector<std::string> args);
 };
 
-class Kick : public Command 
+class Kick : public Command
 {
 public:
     Kick(class Server* server, bool auth);
@@ -139,7 +140,7 @@ public:
     void	execute(Client* client, std::vector<std::string> args);
 };
 
-class Invite : public Command 
+class Invite : public Command
 {
 public:
     Invite(class Server* server, bool auth);
@@ -148,7 +149,7 @@ public:
     void	execute(Client* client, std::vector<std::string> args);
 };
 
-class Topic : public Command 
+class Topic : public Command
 {
 public:
     Topic(class Server* server, bool auth);
@@ -157,7 +158,7 @@ public:
     void	execute(Client* client, std::vector<std::string> args);
 };
 
-class Join : public Command 
+class Join : public Command
 {
 public:
     Join(class Server* server, bool auth);
