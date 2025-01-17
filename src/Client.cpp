@@ -6,7 +6,7 @@
 /*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:34 by froque            #+#    #+#             */
-/*   Updated: 2025/01/17 11:23:34 by rbryento         ###   ########.fr       */
+/*   Updated: 2025/01/17 12:26:12 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void Client::removeChannel(std::string channel) {
 	for (std::vector<std::string>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
 		if (*it == channel) {
 			_channels.erase(it);
-			send_response(-1, this, ":" + _nickname + "@" + getHostname() + " PART " + channel);
+			send_response(-1, this, ":" + _nickname + "!" + getUsername() + "@" + getHostname() + " PART " + channel + " :Goodbye");
 			return;
 		}
 	}
