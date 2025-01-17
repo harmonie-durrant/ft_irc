@@ -14,6 +14,7 @@ SRC =	src/main.cpp				\
 		src/Server.cpp				\
 		src/Client.cpp				\
 		src/Channel.cpp				\
+		src/ModeChannel.cpp				\
 		src/Command.cpp				\
 		src/commands/Invite.cpp		\
 		src/commands/Kick.cpp		\
@@ -29,6 +30,7 @@ SRC =	src/main.cpp				\
 		src/commands/User.cpp		\
 		src/commands/Whois.cpp		\
 		src/commands/Join.cpp		\
+		src/modechannel/AddInvite.cpp		\
 
 OBJ = $(SRC:.cpp=.o)
 

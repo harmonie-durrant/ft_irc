@@ -18,7 +18,7 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 	_commands["CAP"] = new Cap(this, false);
 	_commands["PASS"] = new Pass(this, false);
 	_commands["NICK"] = new Nick(this, false);
-	_commands["USER"] = new User(this, false);	
+	_commands["USER"] = new User(this, false);
 	_commands["PRIVMSG"] = new Privmsg(this, true);
 	_commands["MODE"] = new Mode(this, true);
 	_commands["PING"] = new Ping(this, false);
@@ -36,7 +36,7 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 
 Server::~Server() {
 	std::cout << "Server shutting down..." << std::endl;
-	
+
 	for (command_iterator it = _commands.begin(); it != _commands.end(); it++)
 		delete it->second;
 	for (channel_iterator it = _channels.begin(); it != _channels.end(); it++)
@@ -338,7 +338,7 @@ void Server::addChannel(Channel *channel) {
 
 Client*		Server::get_client_by_nick(std::string client_nickname)
 {
-	for (client_iterator it = _clients.begin(); it != _clients.end(); ++it) 
+	for (client_iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
         if (it->second->getNickname() == client_nickname)
             return it->second;
@@ -352,7 +352,7 @@ std::string Server::getServername() const {
 
 Channel*	Server::getChannel(std::string channel_name)
 {
-    for (channel_iterator it = _channels.begin(); it != _channels.end(); ++it) 
+    for (channel_iterator it = _channels.begin(); it != _channels.end(); ++it)
 	{
         if ((*it)->getName() == channel_name)
             return *it;

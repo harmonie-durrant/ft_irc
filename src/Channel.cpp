@@ -4,6 +4,16 @@ Channel::Channel(std::string name, std::string key, Client* creator, Server *ser
 {
 	_operators.push_back(creator);
 	_clients.push_back(creator);
+	_mode_channels["+i"] = new AddInvite(this);
+	_mode_channels["-i"] = new RemoveInvite(this);
+	_mode_channels["+t"] = new AddTopic(this);
+	//_mode_channels["-t"] = new RemoveTopic(this);
+	//_mode_channels["+k"] = new AddKey(this);
+	//_mode_channels["-k"] = new RemoveKey(this);
+	//_mode_channels["+o"] = new AddOperator(this);
+	//_mode_channels["-o"] = new RemoveOperator(this);
+	//_mode_channels["+l"] = new AddLimit(this);
+	//_mode_channels["-l"] = new RemoLimit(this);
 }
 
 Channel::~Channel()	{}
@@ -13,6 +23,8 @@ void	Channel::setName(std::string name)	{ _name = name; }
 void	Channel::setKey(std::string key)	{ _key = key; }
 void	Channel::setTopic(std::string topic){ _topic = topic; }
 void	Channel::setLimit(size_t limit)		{ _l = limit; }
+void	Channel::setInviteMode(bool invite)	{ _i = invite; }
+void	Channel::setTopicMode(bool topic)	{ _t = topic; }
 
 /* BASIC GETTERS */
 std::string				Channel::getName() const		{ return _name; }
@@ -43,6 +55,15 @@ Client*	Channel::getClient(std::string client_nickname)
 	}
 	return NULL;
 }
+
+ModeChannel*	Channel::getModeChannel(std::string flag){
+	ModeChannel *mdChan = NULL;
+	ModeChannel_iterator it = _mode_channels.find(flag);
+	if (it != _mode_channels.end())
+		mdChan = it->second;
+	return mdChan;
+}
+
 
 /* METHODS */
 void					Channel::addClient(Client* client)

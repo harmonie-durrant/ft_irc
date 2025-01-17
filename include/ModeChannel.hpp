@@ -25,18 +25,104 @@ class ModeChannel
 {
 	protected:
 		class Channel*	_channel;
-		bool	_auth;
 		ModeChannel();
 		ModeChannel(const ModeChannel &copy);
 
 	public:
 		/* CONSTRUCT DECONSTRUCT */
-		explicit ModeChannel(class Channel* Channel, bool auth);
+		explicit ModeChannel(class Channel* channel);
 		virtual ~ModeChannel();
 		/* GETTERS */
-		bool 			auth_required() const;
 		/* METHODS */
-		virtual void	execute(class Client* client, std::vector<std::string> args) = 0;
+		virtual void	execute(std::string pwd, size_t limit) = 0;
 };
 
-/* COMMAND CLASSES */
+/* MODE CLASSES */
+class AddInvite : public ModeChannel
+{
+public:
+	AddInvite(class Channel *channel);
+	~AddInvite();
+
+	void	execute(std::string pwd, size_t limit);
+};
+
+class RemoveInvite : public ModeChannel
+{
+public:
+	RemoveInvite(class Channel *channel);
+	~RemoveInvite();
+
+	void	execute(std::string pwd, size_t limit);
+};
+class AddTopic : public ModeChannel
+{
+public:
+	AddTopic(class Channel *channel);
+	~AddTopic();
+
+	void	execute(std::string pwd, size_t limit);
+};
+
+class RemoveTopic : public ModeChannel
+{
+public:
+	RemoveTopic(class Channel *channel);
+	~RemoveTopic();
+
+	void	execute(std::string pwd, size_t limit);
+};
+
+class AddKey : public ModeChannel
+{
+public:
+	AddKey(class Channel *channel);
+	~AddKey();
+
+	void	execute(std::string pwd, size_t limit);
+};
+
+class RemoveKey : public ModeChannel
+{
+public:
+	RemoveKey(class Channel *channel);
+	~RemoveKey();
+
+	void	execute(std::string pwd, size_t limit);
+};
+
+class AddOPerator : public ModeChannel
+{
+public:
+	AddOPerator(class Channel *channel);
+	~AddOPerator();
+
+	void	execute(std::string pwd, size_t limit);
+};
+
+class RemoveOperator : public ModeChannel
+{
+public:
+	RemoveOperator(class Channel *channel);
+	~RemoveOperator();
+
+	void	execute(std::string pwd, size_t limit);
+};
+
+class AddLimit : public ModeChannel
+{
+public:
+	AddLimit(class Channel *channel);
+	~AddLimit();
+
+	void	execute(std::string pwd, size_t limit);
+};
+
+class RemoveLimit : public ModeChannel
+{
+public:
+	RemoveLimit(class Channel *channel);
+	~RemoveLimit();
+
+	void	execute(std::string pwd, size_t limit);
+};

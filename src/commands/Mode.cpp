@@ -6,11 +6,6 @@ Mode::Mode(Server* server, bool auth) : Command(server, auth) {}
 
 Mode::~Mode() {}
 
-void	Mode::modeChannel(class Client* client, class Channel* channel, std::vector<std::string> args)
-{
-
-}
-
 void Mode::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 2)
 	{
@@ -21,20 +16,35 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 	std::string servername = client->getServerName();
 	if (args.size() == 2)
 	{
+		if (args[1] == nick)
+			return client->send_response(RPL_UMODEIS, client, " :+i");
 		std::string channel_name = args[1];
 		Channel* channel = _server->getChannel(channel_name);
 		if (channel == NULL)
 			return client->send_response(ERR_NOSUCHCHANNEL, client, channel_name + " :No such channel");
 		std::string response;
 		response = channel_name;
-		if (channel->getInviteMode() || channel->getTopicMode() || channel->getKey().length() > 0)
+		if (channel->getInviteMode() || channel->getTopicMode() || channel->getKey().length() > 0
+				|| channel->getLimit() != 0)
 			response += " +";
 		if (channel->getInviteMode())
 			response += "i";
 		if (channel->getTopicMode())
 			response += "t";
-		if (channel->getKey().length() > 0)
+		if (channel->getKey().length() > 0 && channel->getLimit() != 0)
+		{
+			std::ostringstream oss;
+			oss << channel->getLimit();
+			response += "kl " + channel->getKey() + " " + oss.str();
+		}
+		else if (channel->getKey().length() > 0)
 			response += "k " + channel->getKey();
+		else if (channel->getLimit() != 0)
+		{
+			std::ostringstream oss;
+			oss << channel->getLimit();
+			response += "l " + oss.str();
+		}
 		client->send_response(RPL_CHANNELMODEIS, client, response); //! Send the channel modes
 		// voir commentaire pied de page
 		return;
@@ -45,12 +55,16 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 		Channel* channel = _server->getChannel(channel_name);
 		if (channel == NULL)
 			return client->send_response(ERR_NOSUCHCHANNEL, client, channel_name + " :No such channel");
+		if (args[2] == "b")
+			return client->send_response(RPL_ENDOFBANLIST, client, channel_name + " :End of channel ban list");
 		if (channel->isOperator(client) == false)
 			return client->send_response(ERR_CHANOPRIVSNEEDED, client, channel_name + " :You're not channel operator");
 		char sign = args[2][0];
 		if (!(sign == '+' || sign == '-'))
 			return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
-		//modeChannel(client, channel, args);
+		ModeChannel *modeChannel = channel->getModeChannel('i');
+		modeChannel->execute("", 0);
+		//channel->setInviteMode(true);
 	}
 	client->send_response(-1, client, ":" + servername + " MODE " + nick + " " + args[1]);
 }
@@ -60,3 +74,5 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 // :irc.example.com 329 YourNick #example 1693587253
 // 329 : Timestamp de création du canal (1693587253 est un horodatage UNIX).
 // a gerer /mode YourNick +i ?  car irssi envoie ca a la connection
+//  mode #test b -> 368
+// MODE froque #test
