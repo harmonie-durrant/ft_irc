@@ -7,13 +7,13 @@ Channel::Channel(std::string name, std::string key, Client* creator, Server *ser
 	_mode_channels["+i"] = new AddInvite(this);
 	_mode_channels["-i"] = new RemoveInvite(this);
 	_mode_channels["+t"] = new AddTopic(this);
-	//_mode_channels["-t"] = new RemoveTopic(this);
-	//_mode_channels["+k"] = new AddKey(this);
-	//_mode_channels["-k"] = new RemoveKey(this);
-	//_mode_channels["+o"] = new AddOperator(this);
-	//_mode_channels["-o"] = new RemoveOperator(this);
-	//_mode_channels["+l"] = new AddLimit(this);
-	//_mode_channels["-l"] = new RemoLimit(this);
+	_mode_channels["-t"] = new RemoveTopic(this);
+	_mode_channels["+k"] = new AddKey(this);
+	_mode_channels["-k"] = new RemoveKey(this);
+	_mode_channels["+o"] = new AddOPerator(this);
+	_mode_channels["-o"] = new RemoveOperator(this);
+	_mode_channels["+l"] = new AddLimit(this);
+	_mode_channels["-l"] = new RemoveLimit(this);
 }
 
 Channel::~Channel()	{}
