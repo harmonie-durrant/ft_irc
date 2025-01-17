@@ -7,7 +7,7 @@ User::User(Server* server, bool auth) : Command(server, auth) {}
 User::~User() {}
 
 void User::execute(Client* client, std::vector<std::string> args) {
-	if (args.size() != 5)
+	if (args.size() < 5)
 	{
 		client->setAuth(false);
 		client->send_response(ERR_NEEDMOREPARAMS, client, args[0] + " :Not enough parameters");
@@ -21,7 +21,11 @@ void User::execute(Client* client, std::vector<std::string> args) {
 	client->setUsername(args[1]);
 	client->setHostname(args[2]);
 	client->setServerName(args[3]);
-	client->setFullname(args[4]);
+	std::string full_name = args[4];
+	for (size_t i = 0; i < args.size(); i++) {
+		full_name = full_name + " " + args[i];
+	}	
+	client->setFullname(full_name);
 	if (client->getPassOK() == false)
 	{
 		client->send_response(ERR_PASSWDMISMATCH, client, ":Password incorrect");

@@ -25,12 +25,12 @@ bool					Channel::getTopicMode() const	{ return _t; }
 std::vector<Client*>	Channel::getOperators() const	{ return _operators; }
 
 /* ADVANCED GETTERS */
-std::string	Channel::getNamesList() const
+const std::string	Channel::getNamesList()
 {
 	std::string clients;
-	for (std::vector<Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
-	{
-		clients += (*it)->getNickname() + " ";
+	for (std::vector<Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it) {
+		Client *client = *it;
+		clients += ((isOperator(client)) ? "@" : "") + (*it)->getNickname() + " ";
 	}
 	return clients;
 }
@@ -53,7 +53,7 @@ void					Channel::addClient(Client* client)
         _clients.push_back(client);
 	}
 	// send to all except the new client
-	broadcast(":" + client->getNickname() + " JOIN " + _name, client);
+	broadcast(":" + client->getNickname() + "@" + client->getHostname() + " JOIN " + _name, client);
 }
 
 void	Channel::removeClient(Client* client)
@@ -114,7 +114,7 @@ void Channel::sendJoinSelf(Client* client)
 	client->addChannel(this->getName());
 	client->send_response(RPL_TOPIC, client, getName() + " :" + getTopic());
 	// client->send_response(RPL_TOPICTIME, client, getName() + " :" + get_topic_time());
-	client->send_response(RPL_NAMREPLY, client, getName() + " :" + getNamesList());
+	client->send_response(RPL_NAMREPLY, client, "= " + getName() + " :" + getNamesList());
 	client->send_response(RPL_ENDOFNAMES, client, getName() + " :End of /NAMES list");
 }
 

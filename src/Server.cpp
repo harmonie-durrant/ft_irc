@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:44 by froque            #+#    #+#             */
-/*   Updated: 2024/12/16 12:54:39 by fguillet         ###   ########.fr       */
+/*   Updated: 2025/01/17 11:18:42 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Server::Server(int port, std::string password, std::string servername): _port(port), _password(password), _servername(servername) {
 	_max_global_channels = 10;
-	_max_user_channels = 3;
+	_max_user_channels = 10;
 	_commands["CAP"] = new Cap(this, false);
 	_commands["PASS"] = new Pass(this, false);
 	_commands["NICK"] = new Nick(this, false);

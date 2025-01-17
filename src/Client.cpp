@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:34 by froque            #+#    #+#             */
-/*   Updated: 2024/12/16 12:54:45 by fguillet         ###   ########.fr       */
+/*   Updated: 2025/01/17 11:23:34 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void Client::removeChannel(std::string channel) {
 	for (std::vector<std::string>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
 		if (*it == channel) {
 			_channels.erase(it);
-			send_response(-1, this, ":" + _nickname + " PART " + channel);
+			send_response(-1, this, ":" + _nickname + "@" + getHostname() + " PART " + channel);
 			return;
 		}
 	}
