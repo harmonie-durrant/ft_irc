@@ -24,8 +24,12 @@ void Topic::execute(Client* client, std::vector<std::string> args) {
 		return client->send_response(ERR_NOSUCHCHANNEL, client, channel_name + " :No such channel");
 	if (channel->isClient(client) == false)
 		return client->send_response(ERR_NOTONCHANNEL, client, channel_name + " :You're not on that channel");
-	if (new_topic.empty() && args.size() == 2)
-		return client->send_response(RPL_TOPIC, client, channel_name + " :" + channel->getTopic());
+	std::string topic = channel->getTopic();
+	if (new_topic.empty() && args.size() == 2) {
+		if (topic.empty())
+			return client->send_response(RPL_NOTOPIC, client, channel_name + " :No topic is set");
+		return client->send_response(RPL_TOPIC, client, channel_name + " :" + topic);
+	}
 	if (channel->isOperator(client) == false)
 		return client->send_response(ERR_CHANOPRIVSNEEDED, client, channel_name + " :You're not a channel operator");
 	channel->setTopic(new_topic);
