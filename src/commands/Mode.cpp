@@ -62,9 +62,7 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 		char sign = args[2][0];
 		if (!(sign == '+' || sign == '-'))
 			return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
-		ModeChannel *modeChannel = channel->getModeChannel("+i");
-		modeChannel->execute("", 0);
-		//channel->setInviteMode(true);
+		channel->execute_mode_channel(client, args);
 	}
 	client->send_response(-1, client, ":" + servername + " MODE " + nick + " " + args[1]);
 }

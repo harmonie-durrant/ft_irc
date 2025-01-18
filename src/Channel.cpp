@@ -163,3 +163,17 @@ void Channel::kick(Client* kicker, Client* target, const std::string reason = ""
 
     target->send_response(-1, target, ":You have been kicked from " + _name + " by " + kicker->getNickname() + " (" + reason + ")");
 }
+
+void Channel::execute_mode_channel(Client* client, std::vector<std::string> args)
+{
+	(void)client;
+
+	if (args.size() == 3 && args[2].size() == 2)
+	{
+		ModeChannel *modeChannel = this->getModeChannel(args[2]);
+		if (modeChannel == NULL)
+			return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
+		modeChannel->execute("", 0);
+		// si pas assez d argument pour o k l
+	}
+}

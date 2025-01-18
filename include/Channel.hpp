@@ -85,5 +85,5 @@ class Channel
 
 		void					kick(Client* client, Client* target, const std::string reason);
 
-		void					execute_mode_channel();
+		void					execute_mode_channel(Client* client, std::vector<std::string> args);
 };

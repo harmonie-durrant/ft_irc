@@ -37,6 +37,7 @@ class ModeChannel
 		virtual void	execute(std::string pwd, size_t limit) = 0;
 };
 
+
 /* MODE CLASSES */
 class AddInvite : public ModeChannel
 {
