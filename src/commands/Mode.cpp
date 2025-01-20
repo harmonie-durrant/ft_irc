@@ -35,10 +35,17 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 		{
 			std::ostringstream oss;
 			oss << channel->getLimit();
-			response += "kl " + channel->getKey() + " " + oss.str();
+			response += "kl";
+			if (channel->isOperator(client))
+				response += " " + channel->getKey();
+			response += " " + oss.str();
 		}
 		else if (channel->getKey().length() > 0)
-			response += "k " + channel->getKey();
+		{
+			response += "k";
+			if (channel->isOperator(client))
+				response += " " + channel->getKey();
+		}
 		else if (channel->getLimit() != 0)
 		{
 			std::ostringstream oss;
