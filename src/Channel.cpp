@@ -222,6 +222,5 @@ void Channel::execute_mode_channel(Client* client, std::vector<std::string> args
 				modeChannel->execute(str, nb);
 			}
 		}
-
 	}
 }

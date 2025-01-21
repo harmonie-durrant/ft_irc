@@ -56,6 +56,11 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 		// voir commentaire pied de page
 		return;
 	}
+	else if (client->getNickname() == args[1])
+	{
+		// NON gestion du mode invisible pour user
+		client->send_response(501, client, " :Unknown MODE flag");
+	}
 	else
 	{
 		std::string channel_name = args[1];
@@ -73,7 +78,6 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 	}
 	client->send_response(-1, client, ":" + servername + " MODE " + nick + " " + args[1]);
 }
-
 
 // avoir si on doit gerer
 // :irc.example.com 329 YourNick #example 1693587253
