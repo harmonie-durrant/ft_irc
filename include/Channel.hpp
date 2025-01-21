@@ -66,7 +66,7 @@ class Channel
 
 		/* ADVANCED GETTERS */
         Client*                 getClient(std::string client_nickname);
-		std::string				getNamesList() const;
+		const std::string		getNamesList();
 		ModeChannel*			getModeChannel(std::string flag);
 
 		/* METHODS */
