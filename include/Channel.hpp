@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:05:30 by froque            #+#    #+#             */
-/*   Updated: 2024/12/16 12:54:12 by fguillet         ###   ########.fr       */
+/*   Updated: 2025/01/17 11:12:12 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class Channel
 		size_t					getLimit() const;
 		bool					getInviteMode() const;
 		bool					getTopicMode() const;
+		std::vector<Client*>	getOperators() const;
 
 		/* ADVANCED GETTERS */
         Client*                 getClient(std::string client_nickname);

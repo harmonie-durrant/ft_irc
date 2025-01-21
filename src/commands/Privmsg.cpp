@@ -22,7 +22,8 @@ void Privmsg::execute(Client* client, std::vector<std::string> args)
 			message += " " + args[i];
 	if (args[1][0] != '#')
 	{
-		for (std::map<int, Client*>::const_iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
+		std::map<int, Client *> clients = _server->getClients();
+		for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 		{
 			if (it->second->getNickname() == args[1])
 			{

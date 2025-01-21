@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:44 by froque            #+#    #+#             */
-/*   Updated: 2024/12/16 12:54:39 by fguillet         ###   ########.fr       */
+/*   Updated: 2025/01/17 11:18:42 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Server::Server(int port, std::string password, std::string servername): _port(port), _password(password), _servername(servername) {
 	_max_global_channels = 10;
-	_max_user_channels = 3;
+	_max_user_channels = 10;
 	_commands["CAP"] = new Cap(this, false);
 	_commands["PASS"] = new Pass(this, false);
 	_commands["NICK"] = new Nick(this, false);
@@ -30,6 +30,7 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 	_commands["TOPIC"] = new Topic(this, true);
 	_commands["JOIN"] = new Join(this, true);
 	_commands["PART"] = new Part(this, true);
+	_commands["WHO"] = new Who(this, true);
 	_server_fd = create_socket();
 	std::cout << "Starting server on port " << port << std::endl;
 }
@@ -226,18 +227,6 @@ bool	Server::nicknameExist(std::string nickname)
 	return false;
 }
 
-/*
-bool	Server::nicknameExist(std::string nickname)
-{
-	client_iterator it;
-	for (it = _clients.begin(); it != _clients.end(); it++)
-	{
-		if (it->second->getNickname() == nickname)
-			return true;
-	}
-	return false;
-}
-*/
 void Server::start_server(void)
 {
 	pollfd server_poll_fd = {_server_fd, POLLIN, 0};
@@ -273,21 +262,6 @@ void Server::start_server(void)
         }
 	}
 }
-/*
-void Server::addClient(Client client) {
-	_clients.push_back(client);
-}
-
-void Server::removeClient(Client client) {
-	std::vector<Client>::iterator it = _clients.begin();
-	while (it != _clients.end()) {
-		if (it->getFd() == client.getFd()) {
-			_clients.erase(it);
-			break;
-		}
-		it++;
-	}
-}*/
 
 int Server::create_socket() {
 
@@ -327,9 +301,6 @@ int Server::create_socket() {
     }
 
 	return server_fd;
-
-	//std::runtime_error pour pouvoir catch les throw dans les blocs catch(const std::exception& e) sans avoir
-	//a creer une classe heritee de std::exception pour chaque erreur comme on faisait dans les CPP
 }
 
 void Server::addChannel(Channel *channel) {

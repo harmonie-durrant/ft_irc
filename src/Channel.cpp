@@ -36,14 +36,15 @@ std::vector<Client*>	Channel::getClients() const		{ return _clients; }
 size_t					Channel::getLimit() const		{ return _l; }
 bool					Channel::getInviteMode() const	{ return _i; }
 bool					Channel::getTopicMode() const	{ return _t; }
+std::vector<Client*>	Channel::getOperators() const	{ return _operators; }
 
 /* ADVANCED GETTERS */
-std::string	Channel::getNamesList() const
+const std::string	Channel::getNamesList()
 {
 	std::string clients;
-	for (std::vector<Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
-	{
-		clients += (*it)->getNickname() + " ";
+	for (std::vector<Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it) {
+		Client *client = *it;
+		clients += ((isOperator(client)) ? "@" : "") + (*it)->getNickname() + " ";
 	}
 	return clients;
 }
@@ -75,19 +76,19 @@ void					Channel::addClient(Client* client)
         _clients.push_back(client);
 	}
 	// send to all except the new client
-	broadcast(":" + client->getNickname() + " JOIN " + _name, client);
+	broadcast(":" + client->getNickname() + "@" + client->getHostname() + " JOIN " + _name, client);
 }
 
 void	Channel::removeClient(Client* client)
 {
     std::vector<Client*>::iterator it = std::find(_clients.begin(), _clients.end(), client);
-    if (it != _clients.end())
-	{
+    if (it != _clients.end()) {
         _clients.erase(it);
 	}
 	if (_clients.size() == 0)
 		return _server->removeChannel(this);
-	// send to all except the leaving client
+	if (isOperator(client))
+		removeOperator(client);
 	broadcast(":" + client->getNickname() + " PART " + _name, client);
 }
 
@@ -136,7 +137,7 @@ void Channel::sendJoinSelf(Client* client)
 	client->addChannel(this->getName());
 	client->send_response(RPL_TOPIC, client, getName() + " :" + getTopic());
 	// client->send_response(RPL_TOPICTIME, client, getName() + " :" + get_topic_time());
-	client->send_response(RPL_NAMREPLY, client, getName() + " :" + getNamesList());
+	client->send_response(RPL_NAMREPLY, client, "= " + getName() + " :" + getNamesList());
 	client->send_response(RPL_ENDOFNAMES, client, getName() + " :End of /NAMES list");
 }
 

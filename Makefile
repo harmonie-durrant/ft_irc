@@ -30,6 +30,7 @@ SRC =	src/main.cpp				\
 		src/commands/User.cpp		\
 		src/commands/Whois.cpp		\
 		src/commands/Join.cpp		\
+		src/commands/Who.cpp		\
 		src/modechannel/AddInvite.cpp		\
 		src/modechannel/RemoveInvite.cpp	\
 		src/modechannel/AddTopic.cpp		\
@@ -40,7 +41,6 @@ SRC =	src/main.cpp				\
 		src/modechannel/RemoveLimit.cpp		\
 		src/modechannel/AddOperator.cpp			\
 		src/modechannel/RemoveOperator.cpp		\
-
 
 OBJ = $(SRC:.cpp=.o)
 
