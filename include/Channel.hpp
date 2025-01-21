@@ -20,9 +20,14 @@
 #include "numeric_rpl.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
+#include "ModeChannel.hpp"
+
+class ModeChannel;
 
 class Channel
 {
+	typedef std::map<std::string, ModeChannel *>::iterator ModeChannel_iterator;
+
 	private:
 		std::string				_name;			// name of the channel
 		std::string				_key;			// password for channel (empty = no password)
@@ -31,11 +36,12 @@ class Channel
 		std::vector<Client*>	_clients;		// list of clients in the channel
         std::vector<Client*>	_guests_list;   // invited users for channel (if invite only mode)
 		Server*					_server;		// server where the channel is
-		
+
 		size_t					_l;				//max users (0 = unlimited)
 		bool					_i;				//invite only
 		bool					_t;				//TOPIC command only for operators
 
+		std::map<std::string, ModeChannel *>	_mode_channels;
 	public:
 		Channel(std::string name, std::string key, Client* creator, Server* server);
 		~Channel();
@@ -45,6 +51,8 @@ class Channel
 		void					setKey(std::string key);
 		void					setTopic(std::string name);
 		void					setLimit(size_t limit);
+		void					setInviteMode(bool invite);
+		void					setTopicMode(bool topic);
 
 		/* BASIC GETTERS */
 		std::string				getName() const;
@@ -58,7 +66,8 @@ class Channel
 
 		/* ADVANCED GETTERS */
         Client*                 getClient(std::string client_nickname);
-		const std::string				getNamesList();
+		const std::string		getNamesList();
+		ModeChannel*			getModeChannel(std::string flag);
 
 		/* METHODS */
 		void					addClient(Client* client);
@@ -67,7 +76,7 @@ class Channel
 		bool					isInvited(Client* client);
 		void					invite(Client* client);
 		void					uninvite(Client* client);
-	
+
         void                    addOperator(Client* client);
         void                    removeOperator(Client* client);
         bool                    isOperator(Client* client);
@@ -76,4 +85,6 @@ class Channel
 		void					broadcast(const std::string& message, Client* exclude);
 
 		void					kick(Client* client, Client* target, const std::string reason);
+
+		void					execute_mode_channel(Client* client, std::vector<std::string> args);
 };

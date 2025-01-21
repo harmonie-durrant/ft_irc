@@ -1,9 +1,21 @@
 #include "Channel.hpp"
+#include <cstdlib>
+
 
 Channel::Channel(std::string name, std::string key, Client* creator, Server *server): _name(name), _key(key), _topic(""), _server(server), _l(0), _i(false), _t(false)
 {
 	_operators.push_back(creator);
 	_clients.push_back(creator);
+	_mode_channels["+i"] = new AddInvite(this);
+	_mode_channels["-i"] = new RemoveInvite(this);
+	_mode_channels["+t"] = new AddTopic(this);
+	_mode_channels["-t"] = new RemoveTopic(this);
+	_mode_channels["+k"] = new AddKey(this);
+	_mode_channels["-k"] = new RemoveKey(this);
+	_mode_channels["+o"] = new AddOPerator(this);
+	_mode_channels["-o"] = new RemoveOperator(this);
+	_mode_channels["+l"] = new AddLimit(this);
+	_mode_channels["-l"] = new RemoveLimit(this);
 }
 
 Channel::~Channel()	{}
@@ -13,6 +25,8 @@ void	Channel::setName(std::string name)	{ _name = name; }
 void	Channel::setKey(std::string key)	{ _key = key; }
 void	Channel::setTopic(std::string topic){ _topic = topic; }
 void	Channel::setLimit(size_t limit)		{ _l = limit; }
+void	Channel::setInviteMode(bool invite)	{ _i = invite; }
+void	Channel::setTopicMode(bool topic)	{ _t = topic; }
 
 /* BASIC GETTERS */
 std::string				Channel::getName() const		{ return _name; }
@@ -44,6 +58,15 @@ Client*	Channel::getClient(std::string client_nickname)
 	}
 	return NULL;
 }
+
+ModeChannel*	Channel::getModeChannel(std::string flag){
+	ModeChannel *mdChan = NULL;
+	ModeChannel_iterator it = _mode_channels.find(flag);
+	if (it != _mode_channels.end())
+		mdChan = it->second;
+	return mdChan;
+}
+
 
 /* METHODS */
 void					Channel::addClient(Client* client)
@@ -142,4 +165,63 @@ void Channel::kick(Client* kicker, Client* target, const std::string reason = ""
     broadcast(message, NULL);
 
     target->send_response(-1, target, ":You have been kicked from " + _name + " by " + kicker->getNickname() + " (" + reason + ")");
+}
+
+void Channel::execute_mode_channel(Client* client, std::vector<std::string> args)
+{
+	(void)client;
+
+	if (args.size() == 3 && args[2].size() == 2)
+	{
+		ModeChannel *modeChannel = this->getModeChannel(args[2]);
+		if (modeChannel == NULL)
+			return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
+		else if (args[2][1] == 'o' || args[2] == "+k" || args[2] == "+l")
+			return client->send_response(ERR_NEEDMOREPARAMS, client, " :Not enough parameters");
+		modeChannel->execute("", 0);
+	}
+	else
+	{
+		char	sign = args[2][0];
+		int		index = 3;
+		int		nb_args = args.size() - 2;
+		for (size_t i = 1; i < args[2].size(); i++)
+		{
+			if (!(args[2][i] == 'i' || args[2][i] == 't' || args[2][i] == 'l' || args[2][i] == 'k'
+				|| args[2][i] == 'o' || args[2][i] == '-' || args[2][i] == '+'))
+				return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
+		}
+		for (size_t i = 1; i < args[2].size(); i++)
+		{
+			std::string	flag;
+			std::string	str = "";
+			size_t		nb = 0;
+			if (args[2][i] == '-' || args[2][i] == '+')
+				sign = args[2][i];
+			else
+			{
+				flag.push_back(sign);
+				flag.push_back(args[2][i]);
+				ModeChannel *modeChannel = this->getModeChannel(flag);
+				if (modeChannel == NULL)
+					return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
+				if (flag[1] == 'o' || flag == "+k" || flag == "+l")
+				{
+					if (index >= nb_args + 2)
+					{
+						return client->send_response(ERR_NEEDMOREPARAMS, client, " :Not enough parameters");
+					}
+					else
+					{
+						if (flag[1] == 'o' || flag == "+k")
+							str = args[index];
+						else
+							nb = static_cast<size_t>(std::atol(args[index].c_str()));
+						index++;
+					}
+				}
+				modeChannel->execute(str, nb);
+			}
+		}
+	}
 }

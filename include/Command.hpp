@@ -84,6 +84,7 @@ public:
 	~Mode();
 
 	void	execute(class Client* client, std::vector<std::string> args);
+	void	modeChannel(class Client* client, class Channel* channel, std::vector<std::string> args);
 };
 class Part : public Command
 {
