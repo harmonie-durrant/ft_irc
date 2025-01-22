@@ -192,49 +192,44 @@ void Channel::execute_mode_channel(Client* client, std::vector<std::string> args
 		else if (args[2][1] == 'o' || args[2] == "+k" || args[2] == "+l")
 			return client->send_response(ERR_NEEDMOREPARAMS, client, " :Not enough parameters");
 		modeChannel->execute("", 0);
+		return;
 	}
-	else
+	char	sign = args[2][0];
+	int		index = 3;
+	int		nb_args = args.size() - 2;
+	for (size_t i = 1; i < args[2].size(); i++)
 	{
-		char	sign = args[2][0];
-		int		index = 3;
-		int		nb_args = args.size() - 2;
-		for (size_t i = 1; i < args[2].size(); i++)
+		if (!(args[2][i] == 'i' || args[2][i] == 't' || args[2][i] == 'l' || args[2][i] == 'k'
+			|| args[2][i] == 'o' || args[2][i] == '-' || args[2][i] == '+'))
+			return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
+	}
+	for (size_t i = 1; i < args[2].size(); i++)
+	{
+		std::string	flag;
+		std::string	str = "";
+		size_t		nb = 0;
+		if (args[2][i] == '-' || args[2][i] == '+')
 		{
-			if (!(args[2][i] == 'i' || args[2][i] == 't' || args[2][i] == 'l' || args[2][i] == 'k'
-				|| args[2][i] == 'o' || args[2][i] == '-' || args[2][i] == '+'))
-				return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
+			sign = args[2][i];
+			continue;
 		}
-		for (size_t i = 1; i < args[2].size(); i++)
+		flag.push_back(sign);
+		flag.push_back(args[2][i]);
+		ModeChannel *modeChannel = this->getModeChannel(flag);
+		if (modeChannel == NULL)
+			return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
+		if (flag[1] == 'o' || flag == "+k" || flag == "+l")
 		{
-			std::string	flag;
-			std::string	str = "";
-			size_t		nb = 0;
-			if (args[2][i] == '-' || args[2][i] == '+')
-				sign = args[2][i];
-			else
+			if (index >= nb_args + 2)
 			{
-				flag.push_back(sign);
-				flag.push_back(args[2][i]);
-				ModeChannel *modeChannel = this->getModeChannel(flag);
-				if (modeChannel == NULL)
-					return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
-				if (flag[1] == 'o' || flag == "+k" || flag == "+l")
-				{
-					if (index >= nb_args + 2)
-					{
-						return client->send_response(ERR_NEEDMOREPARAMS, client, " :Not enough parameters");
-					}
-					else
-					{
-						if (flag[1] == 'o' || flag == "+k")
-							str = args[index];
-						else
-							nb = static_cast<size_t>(std::atol(args[index].c_str()));
-						index++;
-					}
-				}
-				modeChannel->execute(str, nb);
+				return client->send_response(ERR_NEEDMOREPARAMS, client, " :Not enough parameters");
 			}
+			if (flag[1] == 'o' || flag == "+k")
+				str = args[index];
+			else
+				nb = static_cast<size_t>(std::atol(args[index].c_str()));
+			index++;
 		}
+		modeChannel->execute(str, nb);
 	}
 }
