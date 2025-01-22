@@ -18,7 +18,20 @@ Channel::Channel(std::string name, std::string key, Client* creator, Server *ser
 	_mode_channels["-l"] = new RemoveLimit(this);
 }
 
-Channel::~Channel()	{}
+Channel::~Channel()	{
+	_operators.clear();
+	_clients.clear();
+	delete _mode_channels["+i"];
+	delete _mode_channels["-i"];
+	delete _mode_channels["+t"];
+	delete _mode_channels["-t"];
+	delete _mode_channels["+k"];
+	delete _mode_channels["-k"];
+	delete _mode_channels["+o"];
+	delete _mode_channels["-o"];
+	delete _mode_channels["+l"];
+	delete _mode_channels["-l"];
+}
 
 /* SETTERS */
 void	Channel::setName(std::string name)	{ _name = name; }
