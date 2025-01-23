@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 
-Channel::Channel(std::string name, std::string key, Client* creator, Server *server): _name(name), _key(key), _topic(""), _server(server), _l(0), _i(false), _t(false)
+Channel::Channel(std::string name, std::string key, Client* creator, Server *server): _name(name), _key(key), _topic(""), _server(server), _l(0), _i(false), _t(true)
 {
 	_operators.push_back(creator);
 	_clients.push_back(creator);
