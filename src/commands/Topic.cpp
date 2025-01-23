@@ -30,9 +30,8 @@ void Topic::execute(Client* client, std::vector<std::string> args) {
 			return client->send_response(RPL_NOTOPIC, client, channel_name + " :No topic is set");
 		return client->send_response(RPL_TOPIC, client, channel_name + " :" + topic);
 	}
-	if (channel->isOperator(client) == false)
+	if (channel->isOperator(client) == false && channel->getTopicMode() == true)
 		return client->send_response(ERR_CHANOPRIVSNEEDED, client, channel_name + " :You're not a channel operator");
 	channel->setTopic(new_topic);
 	return channel->broadcast(":" + client->getNickname() + " TOPIC " + channel_name + " :" + new_topic, NULL);
 }
-	
