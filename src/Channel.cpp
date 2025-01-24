@@ -102,7 +102,7 @@ void	Channel::removeClient(Client* client)
 		return _server->removeChannel(this);
 	if (isOperator(client))
 		removeOperator(client);
-	broadcast(":" + client->getNickname() + " PART " + _name, client);
+	broadcast(":" + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname() + " PART " + _name + " :Goodbye", client);
 	if (_operators.empty() && !(_clients.empty())) {
 		addOperator(_clients.front());
 	}
@@ -195,6 +195,9 @@ void Channel::execute_mode_channel(Client* client, std::vector<std::string> args
 		else if (args[2][1] == 'o' || args[2] == "+k" || args[2] == "+l")
 			return client->send_response(ERR_NEEDMOREPARAMS, client, " :Not enough parameters");
 		modeChannel->execute("", 0);
+		std::string response;
+		response = ":" + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname() + " MODE " + _name + " " + args[2];
+		this->broadcast(response, NULL);
 		return;
 	}
 	char	sign = args[2][0];
@@ -235,4 +238,11 @@ void Channel::execute_mode_channel(Client* client, std::vector<std::string> args
 		}
 		modeChannel->execute(str, nb);
 	}
+		std::string response;
+		response = ":" + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname() + " MODE " + _name;
+		for (size_t i = 2; i < args.size(); i++)
+		{
+			response += " " + args[i];
+		}
+		this->broadcast(response, NULL);
 }

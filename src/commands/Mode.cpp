@@ -76,7 +76,7 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 			return client->send_response(ERR_UMODEUNKNOWNFLAG, client, " :Unknown MODE flag");
 		channel->execute_mode_channel(client, args);
 	}
-	client->send_response(-1, client, ":" + servername + " MODE " + nick + " " + args[1]);
+	//client->send_response(-1, client, ":" + servername + " MODE " + nick + " " + args[1]);
 }
 
 // avoir si on doit gerer
