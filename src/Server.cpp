@@ -6,7 +6,7 @@
 /*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:44 by froque            #+#    #+#             */
-/*   Updated: 2025/01/17 11:18:42 by rbryento         ###   ########.fr       */
+/*   Updated: 2025/01/06 14:29:27 by fguillet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,11 +363,11 @@ Command	*Server::getCommand(std::string command) {
 	return cmd;
 }
 
-std::map<int, Client *> Server::getClients() const {
+const std::map<int, Client *>& Server::getClients() const {
 	return _clients;
 }
 
-std::vector<Channel *> Server::getChannels() const {
+const std::vector<Channel *>& Server::getChannels() const {
 	return _channels;
 }
 
