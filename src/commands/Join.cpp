@@ -45,5 +45,4 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 		channel->uninvite(client);
 	channel->addClient(client);
 	channel->sendJoinSelf(client);
-	client->addChannel(channel->getName());
 }
