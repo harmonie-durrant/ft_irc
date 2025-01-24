@@ -42,6 +42,9 @@ class Channel
 		bool					_t;				//TOPIC command only for operators
 
 		std::map<std::string, ModeChannel *>	_mode_channels;
+
+		time_t					_topic_time;
+		Client					*_topic_setter;
 	public:
 		Channel(std::string name, std::string key, Client* creator, Server* server);
 		~Channel();
@@ -63,6 +66,8 @@ class Channel
 		bool					getInviteMode() const;
 		bool					getTopicMode() const;
 		std::vector<Client*>	getOperators() const;
+		Client*					getTopicSetter() const;
+		time_t					getTopicTime() const;
 
 		/* ADVANCED GETTERS */
         Client*                 getClient(std::string client_nickname);
@@ -87,4 +92,7 @@ class Channel
 		void					kick(Client* client, Client* target, const std::string reason);
 
 		void					execute_mode_channel(Client* client, std::vector<std::string> args);
+
+		void					setTopicSetter(Client* client);
+		void					setTopicTime(time_t time);
 };
