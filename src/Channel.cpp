@@ -102,7 +102,7 @@ void	Channel::removeClient(Client* client)
 		return _server->removeChannel(this);
 	if (isOperator(client))
 		removeOperator(client);
-	broadcast(":" + client->getNickname() + " PART " + _name, client);
+	broadcast(":" + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname() + " PART " + _name + " :Goodbye", client);
 }
 
 void    Channel::addOperator(Client* client)
