@@ -12,10 +12,14 @@ void Pass::execute(Client* client, std::vector<std::string> args) {
 		client->send_response(ERR_NEEDMOREPARAMS, client, args[0] + " :Not enough parameters");
 		return;
 	}
+	if (client->getAuth())
+	{
+		client->send_response(ERR_ALREADYREGISTERED, client, ":Unauthorized command (already registered)");
+		return;
+	}
 	if (args[1] != _server->getPassword())
 	{
-		client->send_response(ERR_PASSWDMISMATCH, client, ":Password incorrect");
-		_server->client_disconnect(client->getFd());
+		client->setPassOK(false);
 		return;
 	}
 	client->setPassOK(true);

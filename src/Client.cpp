@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:34 by froque            #+#    #+#             */
-/*   Updated: 2024/12/16 12:54:45 by fguillet         ###   ########.fr       */
+/*   Updated: 2025/01/17 12:26:12 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,15 +107,12 @@ std::vector<std::string> Client::getChannels() const {
 // channels
 
 void Client::removeChannel(std::string channel) {
-	std::vector<std::string>::iterator it = _channels.begin();
-	while (it != _channels.end()) {
+	for (std::vector<std::string>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
 		if (*it == channel) {
 			_channels.erase(it);
-			// send part to client
-			send_response(-1, this, ":" + _nickname + " PART " + channel);
+			send_response(-1, this, ":" + _nickname + "!" + getUsername() + "@" + getHostname() + " PART " + channel + " :Goodbye");
 			return;
 		}
-		++it;
 	}
 	send_response(ERR_NOTONCHANNEL, this, channel + " :You're not on that channel");
 }
@@ -124,14 +121,16 @@ void Client::addChannel(std::string channel) {
 	_channels.push_back(channel);
 }
 
-void Client::removeChannels(Server *server) {
-	std::vector<std::string>::iterator it = _channels.begin();
-	while (it != _channels.end()) {
-		// remove user from channel sending PART to all users in channel
-		server->getChannel(*it)->removeClient(this);
-		// remove channel from user
-		removeChannel(*it);
-		++it;
+void Client::removeChannels(Server* server) {
+	for (std::vector<std::string>::iterator it = _channels.begin(); it != _channels.end();) {
+		Channel* channel = server->getChannel(*it);
+		if (!channel) {
+			send_response(ERR_NOSUCHCHANNEL, this, *it + " :No such channel");
+			it = _channels.erase(it);
+			continue;
+		}
+		channel->removeClient(this);
+		it++;
 	}
 }
 

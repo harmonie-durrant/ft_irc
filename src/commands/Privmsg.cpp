@@ -22,7 +22,8 @@ void Privmsg::execute(Client* client, std::vector<std::string> args)
 			message += " " + args[i];
 	if (args[1][0] != '#')
 	{
-		for (std::map<int, Client*>::const_iterator it = _server->getClients().begin(); it != _server->getClients().end(); it++)
+		std::map<int, Client *> clients = _server->getClients();
+		for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 		{
 			if (it->second->getNickname() == args[1])
 			{
@@ -43,7 +44,11 @@ void Privmsg::execute(Client* client, std::vector<std::string> args)
 	Channel *channel = _server->getChannel(args[1]);
 	if (channel == NULL)
 		return client->send_response(ERR_NOSUCHCHANNEL, client, args[1] + " :No such channel");
-	if (client->inChannel(args[1]) == false)
-		return client->send_response(ERR_CANNOTSENDTOCHAN, client, args[1] + " :Cannot send to channel");
-	channel->broadcast(":" + client->getNickname() + " PRIVMSG " + channel->getName() + " :" + message, client);
+	std::vector<Client *> clients = channel->getClients();
+	for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
+		if (client->getNickname() == (*it)->getNickname()) {
+			return channel->broadcast(":" + client->getNickname() + " PRIVMSG " + channel->getName() + " :" + message, client);
+		}
+	}
+	return client->send_response(ERR_CANNOTSENDTOCHAN, client, args[1] + " :Cannot send to channel");
 }

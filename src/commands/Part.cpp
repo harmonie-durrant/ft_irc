@@ -30,20 +30,20 @@ void Part::execute(Client* client, std::vector<std::string> args) {
 	{
 		if (target_channels[i][0] != '#') {
 			client->send_response(ERR_NOSUCHCHANNEL, client, target_channels[i] + " :Channel needs to start with the channel prefix");
-			return;
+			continue;
 		}
 		Channel *channel = _server->getChannel(target_channels[i]);
 		if (channel == NULL) {
 			client->send_response(ERR_NOSUCHCHANNEL, client, target_channels[i] + " :No such channel");
-			return;
+			continue;
 		}
 		if (channel->getClient(client->getNickname()) == NULL) {
 			client->send_response(ERR_NOTONCHANNEL, client, target_channels[i] + " :You're not on that channel");
-			return;
+			continue;
 		}
-		// remove user from channel sending PART to all users in channel
-		channel->removeClient(client);
 		// remove channel from user
 		client->removeChannel(channel->getName());
+		// remove user from channel sending PART to all users in channel
+		channel->removeClient(client);
 	}
 }

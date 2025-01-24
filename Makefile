@@ -14,6 +14,7 @@ SRC =	src/main.cpp				\
 		src/Server.cpp				\
 		src/Client.cpp				\
 		src/Channel.cpp				\
+		src/ModeChannel.cpp			\
 		src/Command.cpp				\
 		src/commands/Invite.cpp		\
 		src/commands/Kick.cpp		\
@@ -29,12 +30,23 @@ SRC =	src/main.cpp				\
 		src/commands/User.cpp		\
 		src/commands/Whois.cpp		\
 		src/commands/Join.cpp		\
+		src/commands/Who.cpp		\
+		src/modechannel/AddInvite.cpp		\
+		src/modechannel/RemoveInvite.cpp	\
+		src/modechannel/AddTopic.cpp		\
+		src/modechannel/RemoveTopic.cpp		\
+		src/modechannel/AddKey.cpp			\
+		src/modechannel/RemoveKey.cpp		\
+		src/modechannel/AddLimit.cpp			\
+		src/modechannel/RemoveLimit.cpp		\
+		src/modechannel/AddOperator.cpp			\
+		src/modechannel/RemoveOperator.cpp		\
 
 OBJ = $(SRC:.cpp=.o)
 
 CC = c++
 
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
 INCLUDE_DIR = ./include
 

@@ -21,6 +21,10 @@ void Nick::execute(Client* client, std::vector<std::string> args) {
 	}
 	if (_server->nicknameExist(nickname))
 	{
+		if (client->getPassOK()) {
+			args[1] = args[1] + "_";
+			return execute(client, args);
+		}
 		nickname = args[1];
 		if (args[1][0] == ' ')
 			nickname = nickname.substr(1);

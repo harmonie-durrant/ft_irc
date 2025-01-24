@@ -50,16 +50,16 @@ class Server {
 	typedef std::map<std::string, Command *>::iterator command_iterator;
 
 	private:
-		int 								_port;
-		const std::string					_password;
-		int									_server_fd;
-		std::string							_servername;
-		std::vector<pollfd>					_pfds;
-		std::vector<Channel *>				_channels;
-		std::map<int, Client *>				_clients;
-		std::map<std::string, Command *>	_commands;
-		int 								_max_global_channels;
-		int 								_max_user_channels;
+		int 									_port;
+		const std::string						_password;
+		int										_server_fd;
+		std::string								_servername;
+		std::vector<pollfd>						_pfds;
+		std::vector<Channel *>					_channels;
+		std::map<int, Client *>					_clients;
+		std::map<std::string, Command *>		_commands;
+		int 									_max_global_channels;
+		int 									_max_user_channels;
 
 	public:
 		/* CONSTRUCT DECONSTRUCT */
