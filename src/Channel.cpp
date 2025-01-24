@@ -98,13 +98,13 @@ void	Channel::removeClient(Client* client)
     if (it != _clients.end()) {
         _clients.erase(it);
 	}
-	if (_clients.size() == 0)
+	if (_clients.empty())
 		return _server->removeChannel(this);
 	if (isOperator(client))
 		removeOperator(client);
 	broadcast(":" + client->getNickname() + " PART " + _name, client);
-	if (getOperators().empty() && !(getClients().empty())) {
-		addOperator(getClients().front());
+	if (_operators.empty() && !(_clients.empty())) {
+		addOperator(_clients.front());
 	}
 }
 
