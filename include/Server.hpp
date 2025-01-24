@@ -19,6 +19,7 @@
 #include <cstring>
 #include <vector>
 #include <map>
+#include <ctime>
 #include <sys/socket.h>			// pour socket(), bind(), listen() et AF_INET, SOCKSTREAM
 #include <netinet/in.h>			// pour htons(), ntohs(), structure sockadrr_in et INADDR_ANY
 #include <unistd.h>				// pour close()
@@ -93,6 +94,8 @@ class Server {
 		const std::vector<Channel *>&			getChannels() const;
 		Command*							getCommand(std::string command);
 		Client*								get_client_by_nick(std::string nickname);
+
+		static time_t getTimestamp();
 
 		/* EXCEPTIONS */
 		class ServerClosed : public std::exception {

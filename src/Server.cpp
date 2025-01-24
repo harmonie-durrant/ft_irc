@@ -371,4 +371,7 @@ const std::vector<Channel *>& Server::getChannels() const {
 	return _channels;
 }
 
+time_t Server::getTimestamp() {
+	return time(NULL);
+}
 
