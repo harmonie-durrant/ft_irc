@@ -52,9 +52,11 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 			oss << channel->getLimit();
 			response += "l " + oss.str();
 		}
-		client->send_response(RPL_CHANNELMODEIS, client, response); //! Send the channel modes
-		// voir commentaire pied de page
-		return;
+		// channel modes + creation time
+		client->send_response(RPL_CHANNELMODEIS, client, response);
+		std::stringstream ss;
+		ss << channel_name << " " << channel->getCreationTime();
+		return client->send_response(RPL_CREATIONTIME, client, ss.str());
 	}
 	else if (client->getNickname() == args[1])
 	{

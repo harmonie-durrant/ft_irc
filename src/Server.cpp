@@ -305,6 +305,7 @@ int Server::create_socket() {
 }
 
 void Server::addChannel(Channel *channel) {
+	channel->setCreationTime(getTimestamp());
 	_channels.push_back(channel);
 }
 

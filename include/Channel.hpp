@@ -45,6 +45,8 @@ class Channel
 
 		time_t					_topic_time;
 		Client					*_topic_setter;
+
+		time_t					_creation_time;
 	public:
 		Channel(std::string name, std::string key, Client* creator, Server* server);
 		~Channel();
@@ -68,6 +70,7 @@ class Channel
 		std::vector<Client*>	getOperators() const;
 		Client*					getTopicSetter() const;
 		time_t					getTopicTime() const;
+		time_t					getCreationTime() const;
 
 		/* ADVANCED GETTERS */
         Client*                 getClient(std::string client_nickname);
@@ -95,4 +98,5 @@ class Channel
 
 		void					setTopicSetter(Client* client);
 		void					setTopicTime(time_t time);
+		void					setCreationTime(time_t time);
 };
