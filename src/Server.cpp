@@ -112,7 +112,7 @@ void Server::client_connect(void) {
 	pollfd client_poll_fd = {client_fd, POLLIN, 0};
     _pfds.push_back(client_poll_fd);	// Ajouter le nouveau socket à la liste des sockets surveillés
 
-    Client* client = new Client(client_fd, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port), this);
+    Client* client = new Client(client_fd, inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
     _clients[client_fd] = client; //Normalement le std::map classera automatiquement le tableau en fonction du fd client (=cle)
 
     std::cout << "Client with fd " << client_fd << " connected from ";
