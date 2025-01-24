@@ -31,7 +31,7 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 	}
 	if (channel->getClient(client->getNickname()) != NULL)
 		return client->send_response(ERR_USERONCHANNEL, client, args[1] + " :You're already in that channel");
-	if (channel->getLimit() == channel->getClients().size())
+	if (channel->getLimit() != 0 && channel->getClients().size() >= channel->getLimit())
 		return client->send_response(ERR_CHANNELISFULL, client, args[1] + " :Channel is full");
 	if (channel->getInviteMode() && !channel->isInvited(client))
 		return client->send_response(ERR_INVITEONLYCHAN, client, args[1] + " :Channel is invite only");
@@ -45,5 +45,4 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 		channel->uninvite(client);
 	channel->addClient(client);
 	channel->sendJoinSelf(client);
-	client->addChannel(channel->getName());
 }

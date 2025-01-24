@@ -71,6 +71,7 @@ void Server::client_disconnect(int fd) {
 	client_iterator it_c = _clients.find(fd);
 	if (it_c != _clients.end())
 	{
+		it_c->second->removeChannels(this);
 		delete it_c->second;
 		_clients.erase(it_c);
 	}
