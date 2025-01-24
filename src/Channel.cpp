@@ -103,6 +103,9 @@ void	Channel::removeClient(Client* client)
 	if (isOperator(client))
 		removeOperator(client);
 	broadcast(":" + client->getNickname() + " PART " + _name, client);
+	if (getOperators().empty() && !(getClients().empty())) {
+		addOperator(getClients().front());
+	}
 }
 
 void    Channel::addOperator(Client* client)

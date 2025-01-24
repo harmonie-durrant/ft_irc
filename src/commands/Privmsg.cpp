@@ -44,7 +44,15 @@ void Privmsg::execute(Client* client, std::vector<std::string> args)
 	Channel *channel = _server->getChannel(args[1]);
 	if (channel == NULL)
 		return client->send_response(ERR_NOSUCHCHANNEL, client, args[1] + " :No such channel");
-	if (client->inChannel(args[1]) == false)
-		return client->send_response(ERR_CANNOTSENDTOCHAN, client, args[1] + " :Cannot send to channel");
-	channel->broadcast(":" + client->getNickname() + " PRIVMSG " + channel->getName() + " :" + message, client);
+	std::vector<Client *> clients = channel->getClients();
+	for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
+		if (client->getNickname() == (*it)->getNickname()) {
+			for (std::vector<Client *>::iterator iter = clients.begin(); iter != clients.end(); iter++) {
+				if (client->getNickname() == (*iter)->getNickname())
+					continue;
+				return (*iter)->send_response(-1, *iter, ":" + client->getNickname() + " PRIVMSG " + channel->getName() + " :" + message);
+			}
+		}
+	}
+	return client->send_response(ERR_CANNOTSENDTOCHAN, client, args[1] + " :Cannot send to channel");
 }
