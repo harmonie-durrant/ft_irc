@@ -28,10 +28,15 @@ void Topic::execute(Client* client, std::vector<std::string> args) {
 	if (new_topic.empty() && args.size() == 2) {
 		if (topic.empty())
 			return client->send_response(RPL_NOTOPIC, client, channel_name + " :No topic is set");
-		return client->send_response(RPL_TOPIC, client, channel_name + " :" + topic);
+		client->send_response(RPL_TOPIC, client, channel_name + " :" + topic);
+		std::stringstream ss;
+		ss << channel->getTopicSetter()->getNickname() << " " << channel->getTopicTime();
+		return client->send_response(RPL_TOPICWHOTIME, client, channel_name + " " + ss.str());
 	}
 	if (channel->isOperator(client) == false && channel->getTopicMode() == true)
 		return client->send_response(ERR_CHANOPRIVSNEEDED, client, channel_name + " :You're not a channel operator");
 	channel->setTopic(new_topic);
+	channel->setTopicSetter(client);
+	channel->setTopicTime(Server::getTimestamp());
 	return channel->broadcast(":" + client->getNickname() + " TOPIC " + channel_name + " :" + new_topic, NULL);
 }

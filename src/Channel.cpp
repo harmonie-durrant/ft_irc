@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 
-Channel::Channel(std::string name, std::string key, Client* creator, Server *server): _name(name), _key(key), _topic(""), _server(server), _l(0), _i(false), _t(true)
+Channel::Channel(std::string name, std::string key, Client* creator, Server *server): _name(name), _key(key), _topic(""), _server(server), _l(0), _i(false), _t(true), _topic_time(0)
 {
 	_operators.push_back(creator);
 	_clients.push_back(creator);
@@ -50,6 +50,8 @@ size_t					Channel::getLimit() const		{ return _l; }
 bool					Channel::getInviteMode() const	{ return _i; }
 bool					Channel::getTopicMode() const	{ return _t; }
 std::vector<Client*>	Channel::getOperators() const	{ return _operators; }
+Client					*Channel::getTopicSetter() const { return _topic_setter; }
+time_t					Channel::getTopicTime() const	{ return _topic_time; }
 
 /* ADVANCED GETTERS */
 const std::string	Channel::getNamesList()
@@ -245,4 +247,12 @@ void Channel::execute_mode_channel(Client* client, std::vector<std::string> args
 			response += " " + args[i];
 		}
 		this->broadcast(response, NULL);
+}
+
+void Channel::setTopicSetter(Client* client) {
+	_topic_setter = client;
+}
+
+void Channel::setTopicTime(time_t time) {
+	_topic_time = time;
 }
