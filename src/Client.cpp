@@ -130,7 +130,7 @@ void Client::removeChannels(Server* server) {
 			continue;
 		}
 		channel->removeClient(this);
-		it = _channels.erase(it);
+		it++;
 	}
 }
 
