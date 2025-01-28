@@ -22,6 +22,8 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 	if (channel == NULL) {
 		if (_server->getChannels().size() >= (std::size_t)_server->getMaxGlobalChannels())
 			return client->send_response(ERR_TOOMANYCHANNELS, client, args[1] + " :Too many channels");
+		if (client->getChannels().size() >= (std::size_t)_server->getMaxUserChannels())
+			return client->send_response(ERR_TOOMANYCHANNELS, client, args[1] + " :You are already in too many channels");
 		channel = new Channel(args[1], "", client, _server);
 		_server->addChannel(channel);
 		channel->addClient(client);
@@ -41,6 +43,8 @@ void Join::execute(Client* client, std::vector<std::string> args) {
 		return client->send_response(ERR_BADCHANNELKEY, client, args[1] + " :Cannot join channel (+k) - bad key");
 	if (args.size() == 3 && args[2] != channel->getKey())
 		return client->send_response(ERR_BADCHANNELKEY, client, args[1] + " :Cannot join channel (+k) - bad key");
+	if (client->getChannels().size() >= (std::size_t)_server->getMaxUserChannels())
+		return client->send_response(ERR_TOOMANYCHANNELS, client, args[1] + " :You are already in too many channels");
 	if (channel->isInvited(client))
 		channel->uninvite(client);
 	channel->addClient(client);
