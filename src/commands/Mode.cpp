@@ -14,10 +14,18 @@ void Mode::execute(Client* client, std::vector<std::string> args) {
 	}
 	std::string nick = client->getNickname();
 	std::string servername = client->getServerName();
+	if (args.size() == 3 && args[1] == nick)
+	{
+		if (args[2] == "+i") {
+			std::string response = ":" + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname() + " MODE " + nick + " +i";
+			return client->send_response(-1, client, response);
+		}
+		return client->send_response(501, client, " :Unknown MODE flag");
+	}
 	if (args.size() == 2)
 	{
 		if (args[1] == nick)
-			return client->send_response(RPL_UMODEIS, client, " :+i");
+			return client->send_response(RPL_UMODEIS, client, ":+i");
 		std::string channel_name = args[1];
 		Channel* channel = _server->getChannel(channel_name);
 		if (channel == NULL)
