@@ -28,7 +28,7 @@ Server::Server(int port, std::string password, std::string servername): _port(po
 	_commands["KICK"] = new Kick(this, true);
 	_commands["INVITE"] = new Invite(this, true);
 	_commands["TOPIC"] = new Topic(this, true);
-	_commands["JOIN"] = new Join(this, true);
+	_commands["JOIN"] = new Join(this, false);
 	_commands["PART"] = new Part(this, true);
 	_commands["WHO"] = new Who(this, true);
 	_server_fd = create_socket();
