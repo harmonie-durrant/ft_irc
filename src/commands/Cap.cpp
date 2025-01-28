@@ -5,7 +5,6 @@ Cap::Cap(Server* server, bool auth) : Command(server, auth) {}
 Cap::~Cap() {}
 
 void Cap::execute(Client* client, std::vector<std::string> args) {
-	// this is so that CAP LS doesn't send unknown command
 	if (args.size() < 2)
 		return;
 	if (args[1] == "END")
