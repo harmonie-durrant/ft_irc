@@ -7,6 +7,8 @@ Join::~Join() {}
 void Join::execute(Client* client, std::vector<std::string> args) {
 	if (args.size() < 2)
 		return client->send_response(ERR_NEEDMOREPARAMS, client, args[0] + " :Not enough parameters");
+	if (!client->getAuth())
+		return;
 	if (args[1] == "0")
 		return client->send_response(ERR_NOSUCHCHANNEL, client, args[1] + " :Invalid channel name");
 	if (args[1][0] != '#')

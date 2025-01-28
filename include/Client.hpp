@@ -44,7 +44,6 @@ class Client {
 		~Client();
 
 		void send_response(int code, Client *client, std::string msg);
-		void send_message(std::string msg);
 
 		/* GETTERS */
 		std::string					getNickname(void) const;
