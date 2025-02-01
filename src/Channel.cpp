@@ -92,6 +92,7 @@ void					Channel::addClient(Client* client)
         _clients.push_back(client);
 	}
 	// send to all except the new client
+	client->send_response(-1, client, ":" + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname() + " JOIN " + _name);
 	broadcast(":" + client->getNickname() + "@" + client->getHostname() + " JOIN " + _name, client);
 }
 
