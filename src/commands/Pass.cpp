@@ -20,6 +20,7 @@ void Pass::execute(Client* client, std::vector<std::string> args) {
 	if (args[1] != _server->getPassword())
 	{
 		client->setPassOK(false);
+		_server->client_disconnect(client->getFd());
 		return;
 	}
 	client->setPassOK(true);

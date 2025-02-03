@@ -6,7 +6,7 @@
 /*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:44 by froque            #+#    #+#             */
-/*   Updated: 2025/02/03 12:41:01 by rbryento         ###   ########.fr       */
+/*   Updated: 2025/02/03 13:35:21 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,15 @@ int Server::handle_cache(std::string &buffer, Client *client, std::size_t bytes_
 void Server::execute_command(std::vector<std::vector<std::string> > args, Client *client) {
 	for (std::size_t i = 0; i < args.size(); i++)
 	{
+		int exists = false;
+		for (client_iterator it = _clients.begin(); it != _clients.end(); it++)
+		{
+			int cfd = client->getFd();
+			if (it->first == cfd)
+				exists = true;
+		}
+		if (!exists)
+			return;
 		Command *cmd = getCommand(args[i][0]);
 		if (cmd == NULL)
 		{
