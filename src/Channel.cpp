@@ -184,7 +184,9 @@ void Channel::kick(Client* kicker, Client* target, const std::string reason = ""
     std::string message = ":" + kicker->getNickname() + " KICK " + _name + " " + target->getNickname() + " :" + reason;
     broadcast(message, NULL);
 
-    target->send_response(-1, target, ":You have been kicked from " + _name + " by " + kicker->getNickname() + " (" + reason + ")");
+	target->send_response(-1, target, ":" + target->getNickname() + "!" + target->getUsername() + "@" + target->getHostname() + " PART " + _name);
+
+    target->send_response(-1, target, ":" + target->getServerName() + " KICK " + _name + " " + kicker->getNickname() + " :" + reason);
 }
 
 void Channel::execute_mode_channel(Client* client, std::vector<std::string> args)
