@@ -33,4 +33,5 @@ void Nick::execute(Client* client, std::vector<std::string> args) {
 	}
 	client->setNickname(nickname);
 	client->send_response(-1, client, ":" + oldnick + " NICK " + client->getNickname());
+	client->broadcast_to_channels(_server, ":" + oldnick + "!" + client->getUsername() + "@" + client->getHostname() +" NICK :" + client->getNickname(), client);
 }

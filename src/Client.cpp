@@ -6,7 +6,7 @@
 /*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:34 by froque            #+#    #+#             */
-/*   Updated: 2025/01/17 12:26:12 by rbryento         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:10:39 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,34 @@ std::vector<std::string> Client::getChannels() const {
 /* SETTERS */
 
 // channels
+
+void	Client::broadcast_to_channels(Server *server, const std::string& message, Client* exclude)
+{
+	std::vector<std::string> user_cache;
+	for (std::vector<std::string>::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		Channel *channel = server->getChannel(*it);
+		std::vector<Client*> clients = channel->getClients();
+		std::vector<Client*>::iterator it_c = clients.begin();
+		while (it_c != clients.end())
+		{
+			if (exclude != NULL && *it_c == exclude)
+			{
+				++it_c;
+				continue;
+			}
+			std::string c_nick = (*it_c)->getNickname();
+			if (std::find(user_cache.begin(), user_cache.end(), c_nick) != user_cache.end())
+			{
+				return;
+			}
+			(*it_c)->send_response(-1, *it_c, message);
+			user_cache.push_back(c_nick);
+			++it_c;
+		}
+	}
+	user_cache.clear();
+}
 
 void Client::removeChannel(std::string channel) {
 	for (std::vector<std::string>::iterator it = _channels.begin(); it != _channels.end(); ++it) {

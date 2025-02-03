@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fguillet <fguillet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 12:28:42 by froque            #+#    #+#             */
-/*   Updated: 2024/12/15 18:05:15 by fguillet         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:08:37 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ class Client {
 		void	setHostname(std::string hostname);
 		
 		/* METHODS */
+		void	broadcast_to_channels(Server *server, const std::string& message, Client* exclude);
 		void	addChannel(std::string channel);
 		void	removeChannel(std::string channel);
 		void	removeChannels(Server *server);
