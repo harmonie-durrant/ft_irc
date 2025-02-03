@@ -6,7 +6,7 @@
 /*   By: rbryento <rbryento@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 13:57:44 by froque            #+#    #+#             */
-/*   Updated: 2025/02/03 10:13:12 by rbryento         ###   ########.fr       */
+/*   Updated: 2025/02/03 12:41:01 by rbryento         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,10 @@ void Server::client_disconnect(int fd) {
 	client_iterator it_c = _clients.find(fd);
 	if (it_c != _clients.end())
 	{
-		it_c->second->removeChannels(this);
 		delete it_c->second;
 		_clients.erase(it_c);
 	}
-    pfd_iterator it = _pfds.begin();
+	pfd_iterator it = _pfds.begin();
     while (it != _pfds.end())
     {
         if (it->fd == fd)
