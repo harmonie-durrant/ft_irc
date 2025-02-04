@@ -41,9 +41,18 @@ void Part::execute(Client* client, std::vector<std::string> args) {
 			client->send_response(ERR_NOTONCHANNEL, client, target_channels[i] + " :You're not on that channel");
 			continue;
 		}
+		std::string quit_message = "Goodbye";
+		if (args.size() > 2)
+			quit_message = args[2];
+		if (quit_message[0] == ':')
+			quit_message.erase(0, 1);
+		for (std::size_t i = 3; i < args.size(); i++)
+		{
+			quit_message = quit_message + " " + args[i];
+		}
 		// remove channel from user
 		client->removeChannel(channel->getName());
 		// remove user from channel sending PART to all users in channel
-		channel->removeClient(client, "Goodbye");
+		channel->removeClient(client, quit_message);
 	}
 }

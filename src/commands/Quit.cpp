@@ -7,7 +7,6 @@ Quit::Quit(Server* server, bool auth) : Command(server, auth) {}
 Quit::~Quit() {}
 
 void Quit::execute(Client* client, std::vector<std::string> args) {
-	(void)args;
 	std::string quit_message = "Goodbye";
 	if (args.size() > 1)
 		quit_message = args[1];
