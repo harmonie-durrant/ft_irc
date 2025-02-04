@@ -79,7 +79,7 @@ class Channel
 
 		/* METHODS */
 		void					addClient(Client* client);
-		void					removeClient(Client* client);
+		void					removeClient(Client* client, std::string message);
         bool                    isClient(Client* client);
 		bool					isInvited(Client* client);
 		void					invite(Client* client);

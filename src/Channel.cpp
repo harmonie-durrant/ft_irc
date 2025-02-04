@@ -96,7 +96,7 @@ void					Channel::addClient(Client* client)
 	broadcast(":" + client->getNickname() + "@" + client->getHostname() + " JOIN " + _name, client);
 }
 
-void	Channel::removeClient(Client* client)
+void	Channel::removeClient(Client* client, std::string message)
 {
     std::vector<Client*>::iterator it = std::find(_clients.begin(), _clients.end(), client);
     if (it != _clients.end()) {
@@ -106,7 +106,7 @@ void	Channel::removeClient(Client* client)
 		return _server->removeChannel(this);
 	if (isOperator(client))
 		removeOperator(client);
-	broadcast(":" + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname() + " PART " + _name + " :Goodbye", client);
+	broadcast(":" + client->getNickname() + "!" + client->getUsername() + "@" + client->getHostname() + " PART " + _name + " :" + message, client);
 	if (_operators.empty() && !(_clients.empty())) {
 		addOperator(_clients.front());
 	}
@@ -178,7 +178,7 @@ void	Channel::broadcast(const std::string& message, Client* exclude)
 
 void Channel::kick(Client* kicker, Client* target, const std::string reason = "")
 {
-    removeClient(target);
+    removeClient(target, "Goodbye");
     removeOperator(target);
 
     std::string message = ":" + kicker->getNickname() + " KICK " + _name + " " + target->getNickname() + " :" + reason;

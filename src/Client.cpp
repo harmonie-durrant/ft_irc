@@ -157,7 +157,7 @@ void Client::removeChannels(Server* server) {
 			it = _channels.erase(it);
 			continue;
 		}
-		channel->removeClient(this);
+		channel->removeClient(this, "Goodbye");
 		it++;
 	}
 }

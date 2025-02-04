@@ -44,6 +44,6 @@ void Part::execute(Client* client, std::vector<std::string> args) {
 		// remove channel from user
 		client->removeChannel(channel->getName());
 		// remove user from channel sending PART to all users in channel
-		channel->removeClient(client);
+		channel->removeClient(client, "Goodbye");
 	}
 }
