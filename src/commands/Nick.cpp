@@ -21,17 +21,19 @@ void Nick::execute(Client* client, std::vector<std::string> args) {
 	}
 	if (_server->nicknameExist(nickname))
 	{
-		if (client->getPassOK()) {
-			args[1] = args[1] + "_";
-			return execute(client, args);
+		if (!client->getPassOK()) {
+			client->setNickname(nickname);
+			return;
 		}
+		args[1] = args[1] + "_";
 		nickname = args[1];
-		if (args[1][0] == ' ')
-			nickname = nickname.substr(1);
 		client->send_response(ERR_NICKNAMEINUSE, client, nickname + " " + nickname);
-		return;
+		return execute(client, args);
 	}
 	client->setNickname(nickname);
+	if (!client->getPassOK()) {
+		return;
+	}
 	client->send_response(-1, client, ":" + oldnick + " NICK " + client->getNickname());
 	client->broadcast_to_channels(_server, ":" + oldnick + "!" + client->getUsername() + "@" + client->getHostname() +" NICK :" + client->getNickname(), client);
 }

@@ -31,7 +31,6 @@ void User::execute(Client* client, std::vector<std::string> args) {
 		client->send_response(ERR_PASSWDMISMATCH, client, ":Password incorrect");
 		client->send_response(-1, client, "ERROR :Closing Link: localhost (Bad Password)");
 		_server->client_disconnect(client->getFd());
-		client->setAuth(false);
 		return;
 
 	}
