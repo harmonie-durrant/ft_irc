@@ -178,15 +178,30 @@ void	Channel::broadcast(const std::string& message, Client* exclude)
 
 void Channel::kick(Client* kicker, Client* target, const std::string reason = "")
 {
-    removeClient(target, "Goodbye");
-    removeOperator(target);
+	// copy of removeClient
+	std::vector<Client*>::iterator it = std::find(_clients.begin(), _clients.end(), target);
+	if (it != _clients.end()) {
+		_clients.erase(it);
+	}
+	if (_clients.empty())
+	{
+		target->send_response(-1, target, ":" + target->getNickname() + "!" + target->getUsername() + "@" + target->getHostname() + " PART " + _name);
+		target->send_response(-1, target, ":" + target->getServerName() + " KICK " + _name + " " + kicker->getNickname() + " :" + reason);
+		return _server->removeChannel(this);
+	}
+	if (isOperator(target))
+		removeOperator(target);
+	broadcast(":" + target->getNickname() + "!" + target->getUsername() + "@" + target->getHostname() + " PART " + _name + " :" + "Kicked by " + kicker->getNickname() + " (" + reason + ")", target);
+	if (_operators.empty() && !(_clients.empty())) {
+		addOperator(_clients.front());
+	}
 
-    std::string message = ":" + kicker->getNickname() + " KICK " + _name + " " + target->getNickname() + " :" + reason;
-    broadcast(message, NULL);
+	std::string message = ":" + kicker->getNickname() + " KICK " + _name + " " + target->getNickname() + " :" + reason;
+	broadcast(message, NULL);
 
 	target->send_response(-1, target, ":" + target->getNickname() + "!" + target->getUsername() + "@" + target->getHostname() + " PART " + _name);
 
-    target->send_response(-1, target, ":" + target->getServerName() + " KICK " + _name + " " + kicker->getNickname() + " :" + reason);
+	target->send_response(-1, target, ":" + target->getServerName() + " KICK " + _name + " " + kicker->getNickname() + " :" + reason);
 }
 
 void Channel::execute_mode_channel(Client* client, std::vector<std::string> args)

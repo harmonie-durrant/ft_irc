@@ -21,6 +21,8 @@ void Quit::execute(Client* client, std::vector<std::string> args) {
 		for (std::size_t i = 0; i < client->getChannels().size(); i++)
 		{
 			Channel *channel = _server->getChannel(client->getChannels()[i]);
+			if (!channel)
+				return;
 			channel->removeClient(client, quit_message);
 		}
 	}
