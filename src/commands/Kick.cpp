@@ -24,7 +24,8 @@ void Kick::execute(Client* client, std::vector<std::string> args)
         return;
     }
     std::string channelName = args[1];
-    std::string targetNick = args[2];
+    // args[2] can be nicknames separated by commas
+    std::vector<std::string> targetNicks = split(args[2], ',');
     std::string reason = "";
     if (args.size() > 3)
         reason = args[3];
@@ -45,13 +46,16 @@ void Kick::execute(Client* client, std::vector<std::string> args)
         client->send_response(482, client, channelName + " :You're not channel operator");
         return;
     }
-    //Verifier si le client a expulser est dans le channel
-    Client* target = channel->getClient(targetNick);
-    if (!target) 
+    std::vector<std::string>::iterator it;
+    for (it = targetNicks.begin(); it < targetNicks.end(); it++)
     {
-        client->send_response(441, client, targetNick + " " + channelName + " :They aren't on that channel");
-        return;
+        Client* target = channel->getClient(*it);
+        if (!target) 
+        {
+            client->send_response(441, client, target->getNickname() + " " + channelName + " :They aren't on that channel");
+            continue;
+        }
+        //Expulser l'individu susdite
+        channel->kick(client, target, reason);
     }
-    //Expulser l'individu susdite
-    channel->kick(client, target, reason);
 }
